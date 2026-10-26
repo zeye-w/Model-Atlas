@@ -7,6 +7,7 @@
 - Heavy interactive code is route-scoped to the relevant laboratory.
 - Numerical code is framework-independent and covered by Node tests.
 - No server-side training or user data collection in Phase 1.
+- Statically exported (`output: "export"`) and served by Cloudflare Workers static assets (`wrangler.jsonc`).
 
 ## Execution modes
 

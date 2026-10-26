@@ -1,13 +1,18 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { families, models, type ModelFamily } from "@/content/models";
 import { ModelCard } from "@/components/ModelCard";
 
-export function ModelLibrary({ initialFamily }: { initialFamily?: string }) {
+export function ModelLibrary() {
   const [query, setQuery] = useState("");
-  const [family, setFamily] = useState<ModelFamily | "All">(families.includes(initialFamily as ModelFamily) ? initialFamily as ModelFamily : "All");
+  const [family, setFamily] = useState<ModelFamily | "All">("All");
+  // Read ?family= on the client so the page can be statically exported.
+  useEffect(() => {
+    const initialFamily = new URLSearchParams(window.location.search).get("family");
+    if (families.includes(initialFamily as ModelFamily)) setFamily(initialFamily as ModelFamily);
+  }, []);
   const filtered = useMemo(() => models.filter((model) => {
     const combined = [model.name,model.chineseName,model.acronym,model.summary,model.paradigm,model.family,...model.tags].join(" ").toLowerCase();
     return (family === "All" || model.family === family) && combined.includes(query.trim().toLowerCase());

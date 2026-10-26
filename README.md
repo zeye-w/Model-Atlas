@@ -32,15 +32,34 @@ npm test
 npm run build
 ```
 
+## Deploying to Cloudflare Workers
+
+The site is fully static: `next build` (with `output: "export"`) writes HTML and assets to `out/`, and `wrangler.jsonc` serves that directory as a static-assets-only Worker.
+
+```bash
+npm run preview   # build, then serve locally with `wrangler dev` (http://localhost:8787)
+npm run deploy    # build, then `wrangler deploy` (run `npx wrangler login` first)
+```
+
+Continuous deployment is handled by `.github/workflows/deploy.yml`: pull requests run typecheck, tests and the build; pushes to `main` (or a manual run) also deploy. Add these repository secrets first:
+
+| Secret | Value |
+| --- | --- |
+| `CLOUDFLARE_API_TOKEN` | API token with the **Edit Cloudflare Workers** template permissions |
+| `CLOUDFLARE_ACCOUNT_ID` | Your Cloudflare account ID |
+
+Because the export is static, server-only features (request-time `searchParams`, route handlers, middleware, `next/image` optimization) are unavailable. Moving to the [OpenNext Cloudflare adapter](https://opennext.js.org/cloudflare) is the upgrade path if they are needed later.
+
 ## Project map
 
 ```text
 src/app/                 Next.js routes and styles
 src/components/          Shared UI and model visualizations
 src/content/models.ts    Typed model registry
-src/lib/                  Reproducible numerical experiments
+src/lib/                 Reproducible numerical experiments
 tests/                   Algorithm tests
 docs/                    Product specification and architecture
+wrangler.jsonc           Cloudflare Workers configuration
 ```
 
 ## Scientific integrity
