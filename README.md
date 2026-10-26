@@ -32,6 +32,21 @@ npm test
 npm run build
 ```
 
+## Cloudflare Workers preview
+
+The site can also build and run on Cloudflare Workers through **vinext**. This is
+an additional deployment target; the original Next.js commands still work.
+
+```bash
+npm ci
+npm run build:vinext
+npm run start:vinext
+```
+
+For the first hosted preview, see [Cloudflare deployment guide](docs/DEPLOY_CLOUDFLARE.md).
+Cloudflare Git builds must use the vinext build and deploy commands, not the
+default `next build` and `wrangler deploy` pair.
+
 ## Project map
 
 ```text
