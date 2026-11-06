@@ -367,3 +367,93 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; }
 }
+
+
+/* Compact editorial cards: denser layouts without shrinking essential type. */
+.stat-strip { margin-top: 14px; margin-bottom: 52px; }
+.stat-strip > div { padding: 16px 21px; }
+.stat-strip strong { font-size: 27px; }
+
+.section-block { margin-bottom: 54px; }
+.section-heading { margin-bottom: 19px; }
+
+.family-grid { gap: 11px; }
+.family-card {
+  min-height: 172px;
+  padding: 16px;
+  border-radius: 10px;
+}
+.family-card-top svg:first-child { width: 20px; height: 20px; }
+.family-card-top svg:last-child { width: 15px; height: 15px; }
+.family-card h3 { margin: 19px 0 6px; font-size: 14px; }
+.family-card p { font-size: 10.5px; line-height: 1.55; }
+.family-card > span { padding-top: 13px; font-size: 8px; }
+
+.model-grid { gap: 12px; }
+.model-card {
+  min-height: 258px;
+  padding: 15px;
+  border-radius: 10px;
+}
+.model-card-top svg { width: 15px; height: 15px; }
+.model-symbol { height: 59px; }
+.model-symbol span {
+  width: 59px;
+  height: 44px;
+  border-radius: 10px;
+  font-size: 18px;
+}
+.model-card-family { font-size: 8px; letter-spacing: .85px; }
+.model-card h3 { margin: 7px 0 1px; font-size: 15px; }
+.model-card-translation { font-size: 9px; }
+.model-card p { margin-top: 8px; font-size: 10px; line-height: 1.55; }
+.model-card-bottom { padding-top: 11px; font-size: 9px; }
+.mode-badge { font-size: 7px; }
+
+.lab-feature { padding: 22px 25px; gap: 18px; }
+.lab-feature-icon { width: 48px; height: 48px; border-radius: 10px; }
+.lab-feature-icon svg { width: 22px; height: 22px; }
+.lab-feature h2 { font-size: 19px; margin: 8px 0 5px; }
+.lab-feature p { font-size: 11px; line-height: 1.6; }
+
+.atlas-board { min-height: 0; padding: 23px; }
+.atlas-label { margin-bottom: 19px; }
+.atlas-center { margin-bottom: 27px; padding: 13px; }
+.atlas-columns { gap: 12px; }
+.atlas-family { padding: 13px; }
+.atlas-family-title { margin-bottom: 12px; font-size: 11px; }
+.atlas-model-link { padding: 8px 9px; margin-top: 6px; font-size: 10px; }
+
+.lab-list { gap: 12px; }
+.lab-list-card { padding: 20px; gap: 9px; }
+.lab-list-card h2 { font-size: 18px; }
+.resource-grid { gap: 12px; }
+.resource-card { padding: 19px; }
+.resource-card h3 { font-size: 14px; margin-bottom: 7px; }
+.resource-card p { font-size: 10.5px; line-height: 1.6; }
+
+.sequence-list { gap: 8px; }
+.sequence-item { gap: 15px; padding: 13px 17px; }
+.sequence-number { min-width: 30px; font-size: 20px; }
+.sequence-item h3 { font-size: 13px; }
+.sequence-item p { font-size: 10px; line-height: 1.55; }
+
+.lab-panel { padding: 20px; }
+
+@media (min-width: 1500px) {
+  .model-grid:not(.featured-grid) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 1220px) and (min-width: 901px) {
+  .model-grid:not(.featured-grid) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .stat-strip { margin-bottom: 38px; }
+  .stat-strip > div { padding: 14px 8px; }
+  .family-card { min-height: 150px; padding: 15px; }
+  .family-card h3 { margin-top: 15px; }
+  .model-card { min-height: 238px; padding: 14px; }
+  .model-symbol { height: 52px; }
+  .lab-feature { padding: 18px; }
+  .resource-card { padding: 17px; }
+  .lab-list-card { padding: 18px; }
+}
