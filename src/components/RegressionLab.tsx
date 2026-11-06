@@ -26,15 +26,15 @@ function DataPlot({ points, current }: { points: ReturnType<typeof makeDataset>;
   const fitY2 = yCoord(current.w * 1.15 + current.b);
   return <div className="plot-wrap">
     <svg id="regression-data-plot" viewBox="0 0 590 350" role="img" aria-label={`Scatter plot of ${points.length} synthetic observations and fitted line at step ${current.step}. Current weight ${current.w.toFixed(3)}, bias ${current.b.toFixed(3)}.`}>
-      <rect width="590" height="350" fill="#f9fbfa"/>
-      {[-1,0,1,2,3].map((y)=><g key={y}><line x1="55" y1={yCoord(y)} x2="565" y2={yCoord(y)} stroke="#e9eeee"/><text x="44" y={yCoord(y)+4} textAnchor="end" fontSize="11" fill="#a5b0b2">{y}</text></g>)}
-      {[-1,-.5,0,.5,1].map((x)=><g key={x}><line x1={xCoord(x)} y1="18" x2={xCoord(x)} y2="310" stroke="#f0f2f2"/><text x={xCoord(x)} y="330" textAnchor="middle" fontSize="11" fill="#a5b0b2">{x}</text></g>)}
-      <line x1="55" x2="565" y1="310" y2="310" stroke="#cbd9da"/>
-      <line x1={xCoord(-1.15)} x2={xCoord(1.15)} y1={yCoord(1.7 * -1.15 + 1.15)} y2={yCoord(1.7 * 1.15 + 1.15)} stroke="#65a493" strokeWidth="2" strokeDasharray="7 6" opacity=".8"/>
-      <line x1={xCoord(-1.15)} x2={xCoord(1.15)} y1={fitY1} y2={fitY2} stroke="#c38c76" strokeWidth="3" strokeLinecap="round"/>
-      {points.map((p,i)=><circle key={i} cx={xCoord(p.x)} cy={yCoord(p.y)} r="4.4" fill="#789ead" stroke="#fff" strokeWidth="1.35" opacity=".86"/>)}
-      <text x="549" y="341" textAnchor="end" fontSize="10" fill="#9caeb4">FEATURE X</text>
-      <text x="63" y="15" fontSize="10" fill="#9caeb4">TARGET Y</text>
+      <rect width="590" height="350" fill="#fcfaf6"/>
+      {[-1,0,1,2,3].map((y)=><g key={y}><line x1="55" y1={yCoord(y)} x2="565" y2={yCoord(y)} stroke="#eee7de"/><text x="44" y={yCoord(y)+4} textAnchor="end" fontSize="11" fill="#a69b8f">{y}</text></g>)}
+      {[-1,-.5,0,.5,1].map((x)=><g key={x}><line x1={xCoord(x)} y1="18" x2={xCoord(x)} y2="310" stroke="#f1ebe3"/><text x={xCoord(x)} y="330" textAnchor="middle" fontSize="11" fill="#a69b8f">{x}</text></g>)}
+      <line x1="55" x2="565" y1="310" y2="310" stroke="#d8cbbd"/>
+      <line x1={xCoord(-1.15)} x2={xCoord(1.15)} y1={yCoord(1.7 * -1.15 + 1.15)} y2={yCoord(1.7 * 1.15 + 1.15)} stroke="#879078" strokeWidth="2" strokeDasharray="7 6" opacity=".8"/>
+      <line x1={xCoord(-1.15)} x2={xCoord(1.15)} y1={fitY1} y2={fitY2} stroke="#c16b4b" strokeWidth="3" strokeLinecap="round"/>
+      {points.map((p,i)=><circle key={i} cx={xCoord(p.x)} cy={yCoord(p.y)} r="4.4" fill="#b58d73" stroke="#fff" strokeWidth="1.35" opacity=".86"/>)}
+      <text x="549" y="341" textAnchor="end" fontSize="10" fill="#a69b8f">FEATURE X</text>
+      <text x="63" y="15" fontSize="10" fill="#a69b8f">TARGET Y</text>
     </svg>
   </div>;
 }
@@ -46,11 +46,11 @@ function LossPlot({ history }: { history: TrainingState[] }) {
   const y = (loss: number) => h-bottom - (loss / maxLoss) * (h-top-bottom);
   const path = history.map((p,i)=>`${i===0?"M":"L"} ${x(p.step).toFixed(2)} ${y(p.loss).toFixed(2)}`).join(" ");
   return <div className="plot-wrap"><svg viewBox={`0 0 ${w} ${h}`} role="img" aria-label={`Loss history with ${history.length} recorded steps. Latest mean squared error ${history[history.length-1].loss.toFixed(5)}.`}>
-    <rect width={w} height={h} fill="#f9fbfa"/>
-    {[0,.5,1].map((fraction)=><g key={fraction}><line x1={left} x2={w-right} y1={y(maxLoss*fraction)} y2={y(maxLoss*fraction)} stroke="#e9eeee"/><text x={left-9} y={y(maxLoss*fraction)+4} textAnchor="end" fontSize="10" fill="#9dabaf">{(maxLoss*fraction).toFixed(2)}</text></g>)}
-    {[0,60,120,180,240].map((step)=><text key={step} x={x(step)} y={h-8} textAnchor="middle" fontSize="10" fill="#9dabaf">{step}</text>)}
-    <path d={path} stroke="#709a93" strokeWidth="2.8" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-    <circle cx={x(history[history.length-1].step)} cy={y(history[history.length-1].loss)} r="4.5" fill="#608f85" stroke="white" strokeWidth="1.5"/>
+    <rect width={w} height={h} fill="#fcfaf6"/>
+    {[0,.5,1].map((fraction)=><g key={fraction}><line x1={left} x2={w-right} y1={y(maxLoss*fraction)} y2={y(maxLoss*fraction)} stroke="#eee7de"/><text x={left-9} y={y(maxLoss*fraction)+4} textAnchor="end" fontSize="10" fill="#a69b8f">{(maxLoss*fraction).toFixed(2)}</text></g>)}
+    {[0,60,120,180,240].map((step)=><text key={step} x={x(step)} y={h-8} textAnchor="middle" fontSize="10" fill="#a69b8f">{step}</text>)}
+    <path d={path} stroke="#879078" strokeWidth="2.8" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx={x(history[history.length-1].step)} cy={y(history[history.length-1].loss)} r="4.5" fill="#78866f" stroke="white" strokeWidth="1.5"/>
   </svg></div>;
 }
 
