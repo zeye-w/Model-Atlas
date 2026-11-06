@@ -12,7 +12,7 @@ export function NetworkArtwork() {
       {edges.map(([a,b],i)=><line key={i} x1={positions[a][0]} y1={positions[a][1]} x2={positions[b][0]} y2={positions[b][1]} stroke="url(#linkGradient)" strokeWidth="1.25" opacity=".63" />)}
       {positions.map(([x,y],i)=><g key={i} className="network-node"><circle cx={x} cy={y} r={i===3||i===6?25:13} fill={i===3?"#c16b4b":i===6?"#879078":"#fffdf8"} stroke={i===3||i===6?"#fffaf5":"#c8b5a5"} strokeWidth="1.5"/><circle cx={x} cy={y} r={i===3||i===6?8:4} fill={i===3||i===6?"#fffaf5":"#c9a58e"}/></g>)}
       <g transform="translate(181 78)"><rect width="94" height="25" rx="5" fill="#fffdf8" stroke="#e8ddd1"/><text x="47" y="17" textAnchor="middle" fontSize="9" fill="#806a5a" fontFamily="sans-serif">INPUT LAYER</text></g>
-      <g transform="translate(348 249)"><rect width="112" height="25" rx="5" fill="white" stroke="#dfe7e7"/><text x="56" y="17" textAnchor="middle" fontSize="9" fill="#526c7b" fontFamily="sans-serif">HIDDEN STATES</text></g>
+      <g transform="translate(348 249)"><rect width="112" height="25" rx="5" fill="#fffdf8" stroke="#e8ddd1"/><text x="56" y="17" textAnchor="middle" fontSize="9" fill="#806a5a" fontFamily="sans-serif">HIDDEN STATES</text></g>
     </svg>
     <span className="artwork-coordinate">FIG 01. / NEURAL REPRESENTATIONS</span>
   </div>;
