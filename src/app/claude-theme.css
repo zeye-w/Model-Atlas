@@ -724,6 +724,7 @@ body,
   background: linear-gradient(112deg, transparent 28%, rgba(255,255,255,.42) 48%, transparent 68%);
   transform: translateX(-125%);
   opacity: 0;
+  transition: transform 1.05s cubic-bezier(.2,.72,.24,1), opacity 180ms ease;
 }
 .hero-panel:hover {
   translate: 0 -4px;
@@ -733,7 +734,6 @@ body,
 .hero-panel:hover::after {
   opacity: 1;
   transform: translateX(125%);
-  transition: transform 1.05s cubic-bezier(.2,.72,.24,1), opacity 180ms ease;
 }
 .hero-copy {
   position: relative;
@@ -857,5 +857,6 @@ body,
     transition: none !important;
   }
   .hero-panel { transform: none !important; translate: none !important; }
+  .hero-panel::before { transform: none; }
   .hero-panel::after { display: none; }
 }
