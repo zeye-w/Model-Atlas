@@ -12,7 +12,8 @@ test("model slugs are unique and links resolve", () => {
   }
 });
 
-test("the first live lab has a registered execution mode", () => {
+test("both live labs have a registered execution mode", () => {
   assert.equal(getModel("linear-regression")?.executionMode,"live-training");
-  assert.equal(models.filter((model)=>model.executionMode==="live-training").length,1);
+  assert.equal(getModel("cnn")?.executionMode,"live-training");
+  assert.equal(models.filter((model)=>model.executionMode==="live-training").length,2);
 });

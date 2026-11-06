@@ -91,7 +91,7 @@ export const models: ModelDefinition[] = [
     strengths: ["Strong spatial inductive bias", "Shared parameters", "Useful for images and seismic volumes"],
     limitations: ["Global context may need deep stacks", "Training can be compute intensive"],
     useCases: ["Computer vision", "Seismic interpretation", "Image segmentation"],
-    tags: ["Vision", "Convolution", "Feature Maps"], executionMode: "planned",
+    tags: ["Vision", "Convolution", "Feature Maps"], executionMode: "live-training",
     paper: { name: "Gradient-Based Learning Applied to Document Recognition", url: "https://doi.org/10.1109/5.726791", year: "1998" },
     related: ["mlp", "transformer", "pinn"], color: "#bd704f"
   },
