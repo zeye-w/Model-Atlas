@@ -472,12 +472,12 @@ html { scroll-behavior: smooth; }
   to { opacity: 1; transform: translateY(0); }
 }
 @keyframes reveal-up {
-  from { opacity: 0; transform: translate3d(0, 19px, 0); }
-  to { opacity: 1; transform: translate3d(0, 0, 0); }
+  from { opacity: 0; translate: 0 19px; }
+  to { opacity: 1; translate: 0 0; }
 }
 .motion-pending:not(.is-visible) {
   opacity: 0;
-  transform: translate3d(0, 19px, 0);
+  translate: 0 19px;
 }
 .motion-pending.is-visible {
   animation: reveal-up 680ms var(--motion-ease) both;
