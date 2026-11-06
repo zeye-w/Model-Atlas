@@ -9,7 +9,7 @@ const positions = [
 const edges = [[0,1],[0,2],[1,3],[2,3],[2,9],[3,4],[3,5],[3,6],[3,10],[4,6],[5,6],[5,10],[5,11],[6,7],[6,8],[7,8],[7,11],[8,12],[9,10],[10,11],[11,12]];
 
 function handlePointerMove(event: PointerEvent<HTMLDivElement>) {
-  if (event.pointerType === "touch") return;
+  if (event.pointerType === "touch" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const target = event.currentTarget;
   const rect = target.getBoundingClientRect();
   const x = (event.clientX - rect.left) / rect.width - 0.5;
