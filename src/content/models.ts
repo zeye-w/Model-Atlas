@@ -37,7 +37,7 @@ export const models: ModelDefinition[] = [
     useCases: ["Regression baseline", "Trend estimation", "Interpretable forecasting"],
     tags: ["Regression", "Optimization", "Interpretable"], executionMode: "live-training",
     paper: { name: "Least squares — historical overview", url: "https://mathworld.wolfram.com/LeastSquaresFitting.html", year: "Classical" },
-    related: ["mlp", "knn"], color: "#648ba8"
+    related: ["mlp", "knn"], color: "#b96a4b"
   },
   {
     slug: "knn", acronym: "KNN", name: "K-Nearest Neighbors", chineseName: "K 近邻", family: "Classical ML", paradigm: "Supervised Learning", level: "Foundation",
@@ -51,7 +51,7 @@ export const models: ModelDefinition[] = [
     useCases: ["Classification", "Similarity search", "Simple regression"],
     tags: ["Classification", "Distance", "Non-parametric"], executionMode: "planned",
     paper: { name: "Discriminatory Analysis: Nonparametric Discrimination", url: "https://doi.org/10.2172/4211277", year: "1951" },
-    related: ["decision-tree", "linear-regression"], color: "#719b91"
+    related: ["decision-tree", "linear-regression"], color: "#7f8a73"
   },
   {
     slug: "decision-tree", acronym: "DT", name: "Decision Tree", chineseName: "决策树", family: "Classical ML", paradigm: "Supervised Learning", level: "Foundation",
@@ -65,7 +65,7 @@ export const models: ModelDefinition[] = [
     useCases: ["Tabular classification", "Feature interactions", "Decision support"],
     tags: ["Classification", "Tree", "Interpretable"], executionMode: "planned",
     paper: { name: "Classification and Regression Trees", url: "https://www.routledge.com/Classification-and-Regression-Trees/Breiman-Friedman-Olshen-Stone/p/book/9780412048418", year: "1984" },
-    related: ["knn", "mlp"], color: "#c39c69"
+    related: ["knn", "mlp"], color: "#b08a58"
   },
   {
     slug: "mlp", acronym: "MLP", name: "Multilayer Perceptron", chineseName: "多层感知机", family: "Deep Learning", paradigm: "Supervised Learning", level: "Intermediate",
@@ -79,7 +79,7 @@ export const models: ModelDefinition[] = [
     useCases: ["Regression", "Classification", "Neural network fundamentals"],
     tags: ["Neural Network", "Backpropagation", "Optimization"], executionMode: "planned",
     paper: { name: "Learning representations by back-propagating errors", url: "https://doi.org/10.1038/323533a0", year: "1986" },
-    related: ["linear-regression", "cnn", "transformer"], color: "#9e8db4"
+    related: ["linear-regression", "cnn", "transformer"], color: "#988373"
   },
   {
     slug: "cnn", acronym: "CNN", name: "Convolutional Neural Network", chineseName: "卷积神经网络", family: "Deep Learning", paradigm: "Supervised / Self-supervised", level: "Intermediate",
@@ -93,7 +93,7 @@ export const models: ModelDefinition[] = [
     useCases: ["Computer vision", "Seismic interpretation", "Image segmentation"],
     tags: ["Vision", "Convolution", "Feature Maps"], executionMode: "planned",
     paper: { name: "Gradient-Based Learning Applied to Document Recognition", url: "https://doi.org/10.1109/5.726791", year: "1998" },
-    related: ["mlp", "transformer", "pinn"], color: "#668ba5"
+    related: ["mlp", "transformer", "pinn"], color: "#bd704f"
   },
   {
     slug: "transformer", acronym: "TRF", name: "Transformer", chineseName: "Transformer 架构", family: "Deep Learning", paradigm: "Self-supervised / Supervised", level: "Advanced",
@@ -107,7 +107,7 @@ export const models: ModelDefinition[] = [
     useCases: ["Language models", "Vision transformers", "Cross-modal fusion"],
     tags: ["Attention", "Sequence", "Foundation Models"], executionMode: "planned",
     paper: { name: "Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", year: "2017" },
-    related: ["cnn", "mlp", "diffusion"], color: "#9c87af"
+    related: ["cnn", "mlp", "diffusion"], color: "#87796e"
   },
   {
     slug: "diffusion", acronym: "DIF", name: "Diffusion Model", chineseName: "扩散模型", family: "Generative AI", paradigm: "Generative / Self-supervised", level: "Advanced",
@@ -121,7 +121,7 @@ export const models: ModelDefinition[] = [
     useCases: ["Image generation", "Data augmentation", "Generative priors"],
     tags: ["Generative", "Denoising", "Sampling"], executionMode: "planned",
     paper: { name: "Denoising Diffusion Probabilistic Models", url: "https://arxiv.org/abs/2006.11239", year: "2020" },
-    related: ["transformer", "pinn"], color: "#c88c85"
+    related: ["transformer", "pinn"], color: "#bd8577"
   },
   {
     slug: "pinn", acronym: "PINN", name: "Physics-Informed Neural Network", chineseName: "物理信息神经网络", family: "Scientific ML", paradigm: "Physics-guided / Supervised", level: "Advanced",
@@ -135,7 +135,7 @@ export const models: ModelDefinition[] = [
     useCases: ["Wave equations", "Flow modeling", "Scientific inversion"],
     tags: ["Physics", "PDE", "Inverse Problems"], executionMode: "planned",
     paper: { name: "Physics-informed neural networks: A deep learning framework", url: "https://doi.org/10.1016/j.jcp.2018.10.045", year: "2019" },
-    related: ["mlp", "cnn", "diffusion"], color: "#64968f"
+    related: ["mlp", "cnn", "diffusion"], color: "#7f8a73"
   }
 ];
 
