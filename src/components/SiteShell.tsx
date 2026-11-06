@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowUpRight, Atom, BookOpenText, Boxes, Compass, FlaskConical, GitCompareArrows, Github, GraduationCap, Menu, Search, X } from "lucide-react";
+import { ArrowUpRight, Asterisk, Atom, BookOpenText, Boxes, Compass, FlaskConical, GitCompareArrows, Github, GraduationCap, Menu, Search, X } from "lucide-react";
 import { useState } from "react";
 
 const navigation = [
@@ -19,8 +19,8 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   return <>
     <Link className="brand" href="/" onClick={onNavigate} aria-label="Model Atlas home">
-      <span className="brand-emblem"><Atom size={24} strokeWidth={1.65} /></span>
-      <span><strong>MODEL ATLAS</strong><small>RESEARCH WORKSPACE</small></span>
+      <span className="brand-emblem"><Asterisk size={25} strokeWidth={1.55} /></span>
+      <span><strong>MODEL ATLAS</strong><small>AI RESEARCH ATLAS</small></span>
     </Link>
     <div className="sidebar-section-label">WORKSPACE <span>01</span></div>
     <nav className="sidebar-nav" aria-label="Main navigation">
@@ -32,8 +32,8 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       })}
     </nav>
     <div className="sidebar-footer">
-      <div className="sidebar-note"><span className="status-pulse"/><span>Phase 01 · Foundation</span></div>
-      <p>Making machine learning understandable, one experiment at a time.</p>
+      <div className="sidebar-note"><span className="status-pulse"/><span>RESEARCH BUILD · 0.1</span></div>
+      <p>A thoughtful space to study how intelligent systems learn.</p>
       <a href="https://github.com/zeye-w/Model-Atlas" target="_blank" rel="noreferrer"><Github size={16}/> View on GitHub <ArrowUpRight size={14}/></a>
     </div>
   </>;
@@ -49,8 +49,8 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       <header className="topbar">
         <div className="topbar-left">
           <button className="icon-button mobile-menu-trigger" onClick={() => setMenuOpen((v) => !v)} aria-label={menuOpen ? "Close navigation" : "Open navigation"}>{menuOpen ? <X size={21}/> : <Menu size={21}/>}</button>
-          <span className="topbar-eyebrow">THE MODEL ATLAS PROJECT</span>
-          <span className="topbar-separator"/><span className="topbar-location">Explore intelligence, layer by layer.</span>
+          <span className="topbar-eyebrow">MODEL ATLAS / RESEARCH STUDIO</span>
+          <span className="topbar-separator"/><span className="topbar-location">A clearer view of how models learn.</span>
         </div>
         <div className="topbar-actions">
           <Link className="topbar-search" href="/models"><Search size={15}/> <span>Search models</span><kbd>↗</kbd></Link>
