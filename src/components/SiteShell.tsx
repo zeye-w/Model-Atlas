@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowUpRight, Asterisk, Atom, BookOpenText, Boxes, Compass, FlaskConical, GitCompareArrows, Github, GraduationCap, Menu, Search, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const navigation = [
   { href: "/", label: "Overview", icon: Compass },
@@ -41,6 +41,32 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const targets = document.querySelectorAll<HTMLElement>(
+      ".page-wrap > *, .section-block, .family-card, .model-card, .lab-panel, .lab-list-card, .resource-card, .sequence-item, .atlas-family"
+    );
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion || !("IntersectionObserver" in window)) {
+      targets.forEach((target) => target.classList.add("is-visible"));
+      return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.08, rootMargin: "0px 0px -36px 0px" });
+
+    targets.forEach((target) => {
+      target.classList.add("motion-pending");
+      observer.observe(target);
+    });
+    return () => observer.disconnect();
+  }, [pathname]);
+
   return <div className="app-shell">
     <aside className="sidebar desktop-sidebar"><SidebarContent /></aside>
     {menuOpen && <div className="mobile-overlay" onClick={() => setMenuOpen(false)} />}
