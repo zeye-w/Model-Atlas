@@ -15,7 +15,7 @@ export default function HomePage() {
       </div>
       <NetworkArtwork />
     </section>
-    <div className="stat-strip"><div><strong>08</strong><span>CURATED MODELS</span></div><div><strong>04</strong><span>MODEL FAMILIES</span></div><div><strong>01</strong><span>LIVE EXPERIMENT</span></div><div className="stat-message">A structured path from first principles to scientific machine learning. <MoveUpRight size={19}/></div></div>
+    <div className="stat-strip"><div><strong>08</strong><span>CURATED MODELS</span></div><div><strong>04</strong><span>MODEL FAMILIES</span></div><div><strong>02</strong><span>LIVE EXPERIMENTS</span></div><div className="stat-message">A structured path from first principles to scientific machine learning. <MoveUpRight size={19}/></div></div>
     <section className="section-block"><div className="section-heading"><div><span className="section-index">01 / DISCOVER</span><h2>Explore model families</h2><p>Move between foundational methods and modern neural architectures.</p></div><Link href="/atlas" className="text-link">Open algorithm atlas <ArrowUpRight size={16}/></Link></div>
       <div className="family-grid">
         {[

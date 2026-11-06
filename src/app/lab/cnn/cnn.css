@@ -1,0 +1,31 @@
+.cnn-lab { background: #fff; border: 1px solid var(--line); border-radius: 15px; padding: clamp(10px, 2vw, 22px); }
+.cnn-tabs, .cnn-actions, .cnn-legend { display: flex; flex-wrap: wrap; gap: 6px; }
+.cnn-tabs { border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 14px; }
+.cnn-lab button, .cnn-lab select, .cnn-lab input { font: inherit; color: inherit; border: 1px solid var(--line); background: #fff; border-radius: 6px; }
+.cnn-lab button { padding: 6px 9px; font-size: .78rem; cursor: pointer; transition: background-color .15s; }
+.cnn-lab button:hover:enabled, .cnn-lab button[aria-selected="true"] { background: #f4e2d8; color: #844227; border-color: #ddb6a4; }
+.cnn-lab button:disabled { opacity: .5; cursor: default; }
+.cnn-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.65fr) minmax(0, 1.25fr); gap: 10px; align-items: start; }
+.cnn-card { border: 1px solid var(--line); border-radius: 10px; padding: 12px; min-width: 0; font-size: .82rem; }
+.cnn-card h2 { font-size: 1.17rem; margin: 0 0 10px; }
+.cnn-card h3 { font-size: .95rem; margin: 14px 0 5px; }
+.cnn-card p { margin: 7px 0; line-height: 1.5; }
+.cnn-card label { display: grid; gap: 3px; margin: 8px 0; font-weight: 600; }
+.cnn-card input, .cnn-card select { min-width: 0; padding: 5px; width: 100%; }
+.cnn-card .cnn-check { display: flex; align-items: center; }
+.cnn-card .cnn-check input { width: auto; accent-color: var(--coral); }
+.cnn-card ul, .cnn-architecture { padding-left: 18px; }
+.cnn-architecture li { padding: 4px 0; }
+.cnn-plot { background: #fbf8f3; border-radius: 8px; margin: 10px 0; padding: 7px; }
+.cnn-plot svg { display: block; width: 100%; }
+.cnn-legend { font-size: .72rem; }
+.cnn-table { overflow-x: auto; margin: 8px 0; }
+.cnn-table table { width: 100%; border-collapse: collapse; text-align: right; font-variant-numeric: tabular-nums; }
+.cnn-table caption { text-align: left; color: var(--muted); padding-bottom: 4px; }
+.cnn-table th, .cnn-table td { padding: 5px; border-bottom: 1px solid var(--line); }
+.cnn-table thead { background: #f8f3ed; }
+.cnn-theory summary { cursor: pointer; font-weight: 650; }
+.cnn-formula { background: #f8f3ed; padding: 8px; overflow-wrap: anywhere; }
+@media (max-width: 1050px) { .cnn-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr); } }
+@media (max-width: 690px) { .cnn-grid { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { .cnn-lab button { transition: none; } }
