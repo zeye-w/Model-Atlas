@@ -7,6 +7,10 @@
 - Heavy interactive code is route-scoped to the relevant laboratory.
 - Numerical code is framework-independent and covered by Node tests.
 - No server-side training or user data collection in Phase 1.
+- Iterative training runs in a module Web Worker (`src/lib/cnn/training.worker.ts`).
+  The worker and the main-thread fallback share one controller and one
+  `TrainingSession`, so a run is bit-identical wherever it executes and however
+  it is paused or chunked (covered by `tests/cnn-session.test.ts`).
 
 ## Execution modes
 
