@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Typecheck, test, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+
+      - name: Build for Cloudflare (vinext)
+        run: npm run build:vinext
+
+      - name: Smoke-test every route
+        run: |
+          npm run start:vinext -- --port 4173 > preview.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf -o /dev/null http://localhost:4173/ && break; sleep 1; done
+          sha="${GITHUB_SHA::7}"
+          fail=0
+          for path in / /atlas /models /models/linear-regression /models/cnn /lab /lab/linear-regression /lab/cnn /compare /research /learn; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:4173$path")
+            echo "$code $path"
+            [ "$code" = "200" ] || fail=1
+          done
+          curl -s http://localhost:4173/ | grep -q "$sha" || { echo "Build SHA $sha not found in page"; fail=1; }
+          [ "$fail" = 0 ] || { cat preview.log; exit 1; }
+
+  # Cloudflare Workers Builds deploys main on its own. This job only confirms that
+  # it actually happened, so a skipped deploy (like the CNN merge on 2026-11-06)
+  # shows up as a failed check and an email instead of going unnoticed.
+  production-freshness:
+    name: Production serves this commit
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Wait for Cloudflare deploy
+        run: |
+          sha="${GITHUB_SHA::7}"
+          url="https://model-atlas.edwardlab.workers.dev/"
+          for i in $(seq 1 36); do
+            if curl -s -H 'Cache-Control: no-cache' "$url" | grep -q "$sha"; then
+              echo "Production is serving $sha"; exit 0
+            fi
+            echo "Attempt $i: $sha not live yet"; sleep 30
+          done
+          echo "::error::$url is not serving $sha after 18 minutes. Check Workers & Pages → model-atlas → Deployments, and use Retry build if the commit was skipped."
+          exit 1

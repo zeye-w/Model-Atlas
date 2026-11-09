@@ -17,7 +17,7 @@ Other model laboratories are marked as planned; no animation is presented as rea
 
 ## Quick start
 
-Requires Node.js 20.9 or newer.
+Requires Node.js 22 or newer (CI uses 22).
 
 ```bash
 npm install
