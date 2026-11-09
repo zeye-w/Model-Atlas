@@ -1,19 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
-import { classes, dataset, epochOrder, evaluate, forward, makeModel, trainBatch } from "@/lib/cnn/training";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { classes, dataset, evaluate, forward } from "@/lib/cnn/training";
+import type { RunnerEvent } from "@/lib/cnn/controller";
+import { createTrainingRunner, type RunnerMode, type TrainingRunner } from "@/lib/cnn/runner";
+import { TrainingSession, type TrainingConfig, type TrainingSnapshot } from "@/lib/cnn/session";
 import { NumberField, Plot } from "./widgets";
 
 const percent = (value: number) => (value * 100).toFixed(1) + "%";
-
-function initialize(seed: number) {
-  const model = makeModel(seed);
-  const samples = dataset(seed);
-  return {
-    model,
-    history: [{ train: evaluate(model, samples.train), validation: evaluate(model, samples.validation) }],
-    offset: 0,
-    trace: null as ReturnType<typeof trainBatch> | null,
-  };
-}
 
 function Metrics({ title, result }: { title: string; result: ReturnType<typeof evaluate> }) {
   return <div>
@@ -36,41 +28,61 @@ export function Training({ exportJson, active }: { exportJson: (value: object) =
   const [batchSize, setBatchSize] = useState(16);
   const [epochs, setEpochs] = useState(24);
   const [target, setTarget] = useState(0);
+  // The user's intent. The runner may still pause on its own while the tab is hidden.
   const [running, setRunning] = useState(false);
-  const [state, setState] = useState(() => initialize(42));
+  // Render the untrained state synchronously; the runner's first snapshot is identical.
+  const [state, setState] = useState<TrainingSnapshot>(() => new TrainingSession({ seed: 42, rate: .05, batchSize: 16 }).snapshot());
+  const [mode, setMode] = useState<RunnerMode>("worker");
+  const [error, setError] = useState<string | null>(null);
   const [tested, setTested] = useState(false);
   const [sampleIndex, setSampleIndex] = useState(0);
   const [layer, setLayer] = useState<"first" | "second">("first");
   const [selected, select] = useState(0);
+  const runner = useRef<TrainingRunner | null>(null);
+  const runId = useRef(0);
   const samples = useMemo(() => dataset(seed), [seed]);
   const { model, history, offset, trace } = state;
   const epoch = history.length - 1;
   const latest = history[epoch];
-  const order = useMemo(() => epochOrder(samples.train, seed, epoch + 1), [samples, seed, epoch]);
   const test = useMemo(() => tested ? evaluate(model, samples.test) : null, [tested, model, samples]);
   const sample = samples.test[sampleIndex];
   const probabilities = tested ? forward(model, sample.signal).probabilities : null;
 
   useEffect(() => {
-    if (!active || !running || epoch >= target || tested) return;
-    const timer = window.setTimeout(() => {
-      const next = structuredClone(model);
-      const batch = order.slice(offset, offset + batchSize);
-      const update = trainBatch(next, batch, rate);
-      const end = offset + batch.length === order.length;
-      const records = end ? [...history, { train: evaluate(next, samples.train), validation: evaluate(next, samples.validation) }] : history;
-      setState({ model: next, history: records, offset: end ? 0 : offset + batch.length, trace: update });
-      if (end && epoch + 1 >= target) setRunning(false);
-    }, 0);
-    return () => window.clearTimeout(timer);
-  }, [active, running, epoch, target, tested, model, order, offset, batchSize, rate, history, samples]);
+    const onEvent = (event: RunnerEvent) => {
+      if (event.runId !== runId.current) return; // stale message from before a reset
+      if (event.type === "error") { setError(event.message); setRunning(false); return; }
+      setState(event.snapshot);
+      if (event.status === "done") setRunning(false);
+    };
+    const instance = createTrainingRunner(onEvent, setMode);
+    runner.current = instance;
+    setMode(instance.mode);
+    return () => { instance.dispose(); runner.current = null; };
+  }, []);
+
+  // Configuration can only change before training starts; each change starts a fresh, seeded session.
+  useEffect(() => { start({ seed, rate, batchSize }); }, [seed, rate, batchSize]);
+
+  // Train only while the tab is visible and the user wants it to run.
+  useEffect(() => {
+    const id = runId.current;
+    if (active && running && !tested) runner.current?.send({ type: "run", runId: id, targetEpoch: target });
+    else runner.current?.send({ type: "pause", runId: id });
+  }, [active, running, target, tested]);
+
+  function start(config: TrainingConfig) {
+    runId.current += 1;
+    setError(null);
+    runner.current?.send({ type: "reset", runId: runId.current, config });
+  }
 
   function reset(nextSeed = seed) {
     setRunning(false);
     setTarget(0);
     setTested(false);
     setSampleIndex(0);
-    setState(initialize(nextSeed));
+    if (nextSeed === seed) start({ seed, rate, batchSize });
   }
 
   const locked = running || epoch > 0 || offset > 0 || tested;
@@ -81,7 +93,7 @@ export function Training({ exportJson, active }: { exportJson: (value: object) =
       <NumberField label="Learning Rate" min={.001} max={.2} step={.001} value={rate} change={setRate} disabled={locked}/>
       <NumberField label="Batch Size" min={1} max={64} value={batchSize} change={setBatchSize} disabled={locked}/>
       <NumberField label="Epochs" min={1} max={100} value={epochs} change={setEpochs} disabled={running || tested}/>
-      <NumberField label="Seed" min={0} max={4294967295} value={seed} change={value => { setSeed(value); reset(value); }} disabled={locked}/>
+      <NumberField label="Seed" min={0} max={4294967295} value={seed} change={value => { reset(value); setSeed(value); }} disabled={locked}/>
       <div className="cnn-actions">
         <button disabled={running || tested || epoch >= epochs} onClick={() => { setTarget(epochs); setRunning(true); }}>Train</button>
         <button disabled={!running} onClick={() => setRunning(false)}>Pause</button>
@@ -90,12 +102,14 @@ export function Training({ exportJson, active }: { exportJson: (value: object) =
         <button onClick={() => reset()}>Reset</button>
       </div>
       <p aria-live="polite">Epoch {epoch}{offset > 0 && " · " + offset + "/210 samples in current epoch"}</p>
+      <p className="training-meta">{mode === "worker" ? "Runs in a background Web Worker, so the page stays responsive." : "Runs on the main thread (Web Workers unavailable)."} {state.updates} SGD updates.</p>
+      {error && <p role="alert">Training stopped: {error}</p>}
       <h3>Architecture · 155 parameters</h3>
       <ol className="cnn-architecture">
         {["Input · 1 × 64", "Conv1D K5 + ReLU · 4 × 60", "MaxPool K2 S2 · 4 × 30", "Conv1D K3 + ReLU · 8 × 28", "Global Average Pool · 8", "Dense + Softmax · 3"].map(name => <li key={name}>{name}</li>)}
       </ol>
       <p>Stratified split · 210 train / 45 validation / 45 test · length 64.</p>
-      <button onClick={() => exportJson({ workspace: "training", config: { seed, rate, batchSize, epochs, target }, split: { train: 210, validation: 45, test: 45 }, classes, epoch, offset, history, model, trace, test, sample: tested ? { ...sample, probabilities } : null })}>Export JSON</button>
+      <button onClick={() => exportJson({ workspace: "training", config: { seed, rate, batchSize, epochs, target }, execution: { mode: "live-training", runner: mode, updates: state.updates }, split: { train: 210, validation: 45, test: 45 }, classes, epoch, offset, history, model, trace, test, sample: tested ? { ...sample, probabilities } : null })}>Export JSON</button>
     </section>
     <section className="cnn-card">
       <h2>Training monitor</h2>
