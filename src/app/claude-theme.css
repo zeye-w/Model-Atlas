@@ -875,3 +875,28 @@ body,
 @media (max-width: 900px) and (prefers-reduced-motion: reduce) {
   .site-sidebar, .site-sidebar.open { transition: none; }
 }
+
+/* KaTeX formulas (src/components/Formula.tsx) */
+.formula { position: relative; margin: 0 0 20px; }
+.formula.formula-box { overflow-wrap: normal; padding: 22px 18px 18px; }
+.formula.cnn-formula { margin: 8px 0; padding: 10px 8px 8px; }
+.formula-render { overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
+.formula-render .katex-display { margin: 0; }
+.formula-box .katex { font-size: 1.05em; color: #7b4a34; }
+.cnn-formula .katex { font-size: 1.02em; color: #5d4537; }
+.formula-copy {
+  position: absolute; top: 6px; right: 6px;
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 7px; border: 1px solid #e3d5c8; border-radius: 6px;
+  background: #fffaf4; color: #8f6b57;
+  font: 600 10px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .2px;
+  cursor: pointer; opacity: .55; transition: opacity .15s, background .15s;
+}
+.formula:hover .formula-copy, .formula-copy:focus-visible { opacity: 1; }
+.formula-copy:hover { background: #f6ebdf; }
+@media (hover: none) { .formula-copy { opacity: 1; } }
+/* Let grid columns shrink so a wide formula scrolls inside its box instead of widening the page. */
+.detail-grid > * { min-width: 0; }
+/* Narrow cards: put the copy button above the formula instead of over it. */
+.formula.cnn-formula { display: flex; flex-direction: column; }
+.formula.cnn-formula .formula-copy { position: static; align-self: flex-end; order: -1; margin-bottom: 2px; }

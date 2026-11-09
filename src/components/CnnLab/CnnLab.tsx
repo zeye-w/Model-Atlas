@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Explorer } from "./Explorer";
 import { Training } from "./Training";
 import { Theory } from "./Theory";
@@ -19,7 +19,7 @@ function exportJson(value: object) {
   window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-export function CnnLab() {
+export function CnnLab({ theoryFormulas }: { theoryFormulas: ReactNode[] }) {
   const [active, setActive] = useState(0);
   const [visitedTraining, visitTraining] = useState(false);
   function open(workspace: number) {
@@ -38,6 +38,6 @@ export function CnnLab() {
     </div>
     <div id="cnn-panel-0" role="tabpanel" aria-labelledby="cnn-tab-0" hidden={active !== 0}><Explorer exportJson={exportJson}/></div>
     <div id="cnn-panel-1" role="tabpanel" aria-labelledby="cnn-tab-1" hidden={active !== 1}>{visitedTraining && <Training exportJson={exportJson} active={active === 1}/>}</div>
-    <div id="cnn-panel-2" role="tabpanel" aria-labelledby="cnn-tab-2" hidden={active !== 2}><Theory open={open}/></div>
+    <div id="cnn-panel-2" role="tabpanel" aria-labelledby="cnn-tab-2" hidden={active !== 2}><Theory open={open} formulas={theoryFormulas}/></div>
   </div>;
 }
