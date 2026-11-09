@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
 import test from "node:test";
-import { families, getModel, models } from "../src/content/models";
+import { countLabel, families, featuredModels, getModel, isLiveMode, liveLabs, models, modelsInFamily, pad2, plannedLabs } from "../src/content/models";
 
 test("model slugs are unique and links resolve", () => {
   assert.equal(new Set(models.map((model)=>model.slug)).size,models.length);
@@ -15,5 +16,37 @@ test("model slugs are unique and links resolve", () => {
 test("both live labs have a registered execution mode", () => {
   assert.equal(getModel("linear-regression")?.executionMode,"live-training");
   assert.equal(getModel("cnn")?.executionMode,"live-training");
-  assert.equal(models.filter((model)=>model.executionMode==="live-training").length,2);
+  assert.deepEqual(liveLabs.map((model)=>model.slug),["linear-regression","cnn"]);
+});
+
+test("execution mode and lab metadata agree", () => {
+  for (const model of models) {
+    if (isLiveMode(model.executionMode) || model.executionMode === "trace") {
+      assert.ok(model.lab, `${model.slug} is ${model.executionMode} but has no lab entry`);
+    } else {
+      assert.equal(model.lab, undefined, `${model.slug} is planned but advertises a lab`);
+    }
+    assert.ok(!(model.lab && model.labPlan), `${model.slug} has both a shipped lab and a roadmap entry`);
+  }
+});
+
+test("every shipped lab has a route", () => {
+  for (const model of liveLabs) {
+    const route = `src/app${model.lab!.href}/page.tsx`;
+    assert.ok(existsSync(route), `${model.slug} links to ${model.lab!.href}, but ${route} does not exist`);
+  }
+});
+
+test("home page collections derive from the registry", () => {
+  assert.equal(featuredModels.length, 3, "the featured grid is laid out for three cards");
+  assert.equal(families.reduce((sum, family)=>sum + modelsInFamily(family).length, 0), models.length);
+  for (const family of families) assert.ok(modelsInFamily(family).length > 0, `${family} has no models`);
+  assert.ok(plannedLabs.every((model)=>model.executionMode === "planned"));
+});
+
+test("count formatting", () => {
+  assert.equal(pad2(8), "08");
+  assert.equal(pad2(12), "12");
+  assert.equal(countLabel(1, "model"), "01 model");
+  assert.equal(countLabel(3, "model"), "03 models");
 });

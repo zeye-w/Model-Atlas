@@ -44,6 +44,15 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  useEffect(() => { setMenuOpen(false); }, [pathname]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (event: KeyboardEvent) => { if (event.key === "Escape") setMenuOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
+
   useEffect(() => {
     const targets = document.querySelectorAll<HTMLElement>(
       ".page-wrap > *, .section-block, .family-card, .model-card, .lab-panel, .lab-list-card, .resource-card, .sequence-item, .atlas-family"
@@ -70,13 +79,13 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
   }, [pathname]);
 
   return <div className="app-shell">
-    <aside className="sidebar desktop-sidebar"><SidebarContent /></aside>
     {menuOpen && <div className="mobile-overlay" onClick={() => setMenuOpen(false)} />}
-    <aside className={`sidebar mobile-sidebar ${menuOpen ? "open" : ""}`}><SidebarContent onNavigate={() => setMenuOpen(false)}/></aside>
+    {/* One sidebar for every viewport: sticky column on desktop, off-canvas drawer below 900px (see .site-sidebar). */}
+    <aside id="site-sidebar" className={`sidebar site-sidebar ${menuOpen ? "open" : ""}`}><SidebarContent onNavigate={() => setMenuOpen(false)}/></aside>
     <div className="main-shell">
       <header className="topbar">
         <div className="topbar-left">
-          <button className="icon-button mobile-menu-trigger" onClick={() => setMenuOpen((v) => !v)} aria-label={menuOpen ? "Close navigation" : "Open navigation"}>{menuOpen ? <X size={21}/> : <Menu size={21}/>}</button>
+          <button className="icon-button mobile-menu-trigger" onClick={() => setMenuOpen((v) => !v)} aria-label={menuOpen ? "Close navigation" : "Open navigation"} aria-expanded={menuOpen} aria-controls="site-sidebar">{menuOpen ? <X size={21}/> : <Menu size={21}/>}</button>
           <span className="topbar-eyebrow">MODEL ATLAS / RESEARCH STUDIO</span>
           <span className="topbar-separator"/><span className="topbar-location">A clearer view of how models learn.</span>
         </div>
