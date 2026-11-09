@@ -50,3 +50,14 @@ test("count formatting", () => {
   assert.equal(countLabel(1, "model"), "01 model");
   assert.equal(countLabel(3, "model"), "03 models");
 });
+
+test("every formula is valid KaTeX", async () => {
+  const { renderLatex } = await import("../src/lib/math");
+  const { cnnLessons } = await import("../src/content/cnn-theory");
+  const formulas = [...models.map((model) => [model.slug, model.latex]), ...cnnLessons.map((lesson) => [lesson.title, lesson.latex])];
+  assert.equal(formulas.length, models.length + 12);
+  for (const [name, latex] of formulas) {
+    assert.doesNotThrow(() => renderLatex(latex), `${name}: ${latex}`);
+    assert.match(renderLatex(latex), /<math/, `${name} has a MathML rendering for screen readers`);
+  }
+});

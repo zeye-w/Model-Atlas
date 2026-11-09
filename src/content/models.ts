@@ -12,7 +12,8 @@ export interface ModelDefinition {
   summary: string;
   overview: string;
   architecture: string[];
-  formula: string;
+  /** KaTeX-compatible LaTeX, rendered on the server. */
+  latex: string;
   formulaDescription: string;
   strengths: string[];
   limitations: string[];
@@ -36,7 +37,7 @@ export const models: ModelDefinition[] = [
     summary: "The simplest lens into prediction, optimization, and generalization.",
     overview: "Linear regression fits a weighted sum of input features to a continuous target. It is a starting point for understanding model parameters, residuals, gradient descent, and the difference between fitting and generalizing.",
     architecture: ["Input features x", "Weighted sum wx + b", "Predicted target ŷ", "Squared-error objective", "Gradient-based parameter update"],
-    formula: "ŷ = wx + b    ·    L = (1/n) Σ(ŷᵢ − yᵢ)²",
+    latex: String.raw`\hat{y} = wx + b \qquad \mathcal{L} = \frac{1}{n}\sum_{i=1}^{n} \left(\hat{y}_i - y_i\right)^2`,
     formulaDescription: "The parameters w and b minimize mean squared prediction error. The lab computes the exact gradients over a synthetic dataset.",
     strengths: ["Fast, interpretable baseline", "Clear mathematical assumptions", "Effective for approximately linear relationships"],
     limitations: ["Needs feature engineering for complex nonlinear structure", "Sensitive to outliers without robust losses"],
@@ -51,7 +52,7 @@ export const models: ModelDefinition[] = [
     summary: "Predict from nearby examples rather than learning a global equation.",
     overview: "KNN predicts from nearby labeled samples under a selected distance metric. It makes local structure, feature scaling and the bias–variance trade-off visible.",
     architecture: ["Store labeled examples", "Choose a query point", "Compute distances", "Select K nearest samples", "Aggregate labels or targets"],
-    formula: "d(x, xᵢ) = √Σⱼ(xⱼ − xᵢⱼ)²",
+    latex: String.raw`d(\mathbf{x}, \mathbf{x}_i) = \sqrt{\sum_{j} \left(x_j - x_{ij}\right)^2}`,
     formulaDescription: "Euclidean distance is one common metric. For classification, the K closest examples can vote for a class.",
     strengths: ["Intuitive local predictions", "Non-parametric decisions", "No explicit fitting stage"],
     limitations: ["Sensitive to scaling and irrelevant features", "Query cost grows with training set size"],
@@ -65,7 +66,7 @@ export const models: ModelDefinition[] = [
     summary: "Turn feature thresholds into a transparent sequence of decisions.",
     overview: "A decision tree partitions input space with feature-based splits. Its structure reveals the trade-off between interpretability and overfitting.",
     architecture: ["Collect labeled samples", "Score candidate feature splits", "Choose the best split", "Repeat for child nodes", "Predict at a leaf"],
-    formula: "Gini = 1 − Σₖ pₖ²",
+    latex: String.raw`\operatorname{Gini} = 1 - \sum_{k} p_k^2`,
     formulaDescription: "Gini impurity is one possible criterion for classification splits. Lower values indicate purer child nodes.",
     strengths: ["Rule-based explanations", "Captures nonlinear interactions", "Little feature preprocessing needed"],
     limitations: ["Deep trees can overfit", "Small data changes may change the tree"],
@@ -79,7 +80,7 @@ export const models: ModelDefinition[] = [
     summary: "Stack learned nonlinear transformations to approximate complex functions.",
     overview: "An MLP uses fully connected layers, nonlinear activations, and backpropagation. It bridges basic regression and modern deep learning.",
     architecture: ["Input layer", "Dense linear projection", "Nonlinear activation", "Additional hidden layers", "Output and backpropagation"],
-    formula: "h⁽ˡ⁾ = σ(W⁽ˡ⁾h⁽ˡ⁻¹⁾ + b⁽ˡ⁾)",
+    latex: String.raw`\mathbf{h}^{(l)} = \sigma\left(W^{(l)} \mathbf{h}^{(l-1)} + \mathbf{b}^{(l)}\right)`,
     formulaDescription: "Each layer transforms the preceding representation, with gradients flowing backward via the chain rule.",
     strengths: ["Flexible nonlinear approximation", "Foundation for deep learning", "General-purpose feature modeling"],
     limitations: ["Requires tuning and data", "Does not directly exploit image or graph structure"],
@@ -93,7 +94,7 @@ export const models: ModelDefinition[] = [
     summary: "Learn local patterns through shared filters and hierarchical feature maps.",
     overview: "CNNs apply learned kernels across spatially organized signals. Shared weights and receptive fields help discover edges, textures and larger structures across layers.",
     architecture: ["Image or spatial input", "Learned convolution filters", "Feature maps and activation", "Pooling or downsampling", "Prediction head"],
-    formula: "Y[i, j] = ΣₘΣₙ K[m, n] X[i + m, j + n]",
+    latex: String.raw`Y[i, j] = \sum_{m}\sum_{n} K[m, n]\, X[i + m, j + n]`,
     formulaDescription: "The common deep-learning implementation is cross-correlation (no kernel flip), although usually called convolution.",
     strengths: ["Strong spatial inductive bias", "Shared parameters", "Useful for images and seismic volumes"],
     limitations: ["Global context may need deep stacks", "Training can be compute intensive"],
@@ -108,7 +109,7 @@ export const models: ModelDefinition[] = [
     summary: "Use attention to connect positions across a sequence.",
     overview: "The Transformer builds contextual representations with attention and feed-forward blocks. Attention reveals input-dependent interactions but should not be mistaken for a complete model explanation.",
     architecture: ["Input token embeddings", "Query / Key / Value projections", "Scaled dot-product attention", "Feed-forward transformation", "Residual paths and normalization"],
-    formula: "Attention(Q, K, V) = softmax(QKᵀ / √dₖ)V",
+    latex: String.raw`\operatorname{Attention}(Q, K, V) = \operatorname{softmax}\left(\frac{QK^{\top}}{\sqrt{d_k}}\right) V`,
     formulaDescription: "Queries and keys produce attention scores; softmax yields weights that combine the values.",
     strengths: ["Long-range relationships", "Flexible across modalities", "Parallelizable training"],
     limitations: ["Standard attention may scale quadratically with length", "Attention maps are not causal explanations"],
@@ -122,7 +123,7 @@ export const models: ModelDefinition[] = [
     summary: "Generate structured samples by learning to reverse a noise process.",
     overview: "Denoising diffusion models learn a reverse process that transforms noise toward samples drawn from the data distribution. Honest trajectory replay can reveal sampling stages without claiming live training.",
     architecture: ["Data sample", "Forward noising schedule", "Noise-conditioned denoiser", "Reverse sampling steps", "Generated sample"],
-    formula: "xₜ = √ᾱₜ x₀ + √(1 − ᾱₜ) ε",
+    latex: String.raw`\mathbf{x}_t = \sqrt{\bar{\alpha}_t}\, \mathbf{x}_0 + \sqrt{1 - \bar{\alpha}_t}\, \boldsymbol{\epsilon}`,
     formulaDescription: "Clean data mixes with Gaussian noise at step t; a learned model approximates the reverse process.",
     strengths: ["Generative flexibility", "Conditional generation", "Scientific prior modeling"],
     limitations: ["Sampling can be expensive", "Samples require careful evaluation"],
@@ -136,7 +137,7 @@ export const models: ModelDefinition[] = [
     summary: "Couple data fitting with differential-equation constraints.",
     overview: "PINNs train a neural approximation while penalizing violations of governing equations, boundary conditions and observations. They are relevant for scientific inverse problems.",
     architecture: ["Coordinates and parameters", "Neural field approximation", "Automatic differentiation", "Equation and boundary residuals", "Composite training objective"],
-    formula: "L = λdata Ldata + λphysics LPDE + λBC LBC",
+    latex: String.raw`\mathcal{L} = \lambda_{\text{data}} \mathcal{L}_{\text{data}} + \lambda_{\text{PDE}} \mathcal{L}_{\text{PDE}} + \lambda_{\text{BC}} \mathcal{L}_{\text{BC}}`,
     formulaDescription: "Physics, observations and boundary conditions contribute weighted losses; balancing depends on the problem and scaling.",
     strengths: ["Uses governing equations", "Can integrate sparse observations", "Relevant to inverse problems"],
     limitations: ["Loss balancing is difficult", "Can struggle with multiscale dynamics"],
