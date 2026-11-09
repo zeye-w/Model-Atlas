@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowUpRight, Asterisk, Atom, BookOpenText, Boxes, Compass, FlaskConical, GitCompareArrows, Github, GraduationCap, Menu, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { buildCommitUrl, buildSha } from "@/lib/build-info";
 
 const navigation = [
   { href: "/", label: "Overview", icon: Compass },
@@ -32,7 +33,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       })}
     </nav>
     <div className="sidebar-footer">
-      <div className="sidebar-note"><span className="status-pulse"/><span>RESEARCH BUILD · 0.1</span></div>
+      <div className="sidebar-note"><span className="status-pulse"/><span>RESEARCH BUILD · 0.1 · <a className="build-sha" href={buildCommitUrl} target="_blank" rel="noreferrer" title="Commit this build was made from"><code>{buildSha}</code></a></span></div>
       <p>A thoughtful space to study how intelligent systems learn.</p>
       <a href="https://github.com/zeye-w/Model-Atlas" target="_blank" rel="noreferrer"><Github size={16}/> View on GitHub <ArrowUpRight size={14}/></a>
     </div>

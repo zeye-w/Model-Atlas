@@ -860,3 +860,8 @@ body,
   .hero-panel::before { transform: none; }
   .hero-panel::after { display: none; }
 }
+
+/* Build SHA badge in the sidebar footer */
+.sidebar-footer a.build-sha { display: inline; color: inherit; font-weight: inherit; }
+.sidebar-footer a.build-sha code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; letter-spacing: 0; }
+.sidebar-footer a.build-sha:hover code { text-decoration: underline; text-underline-offset: 2px; }
