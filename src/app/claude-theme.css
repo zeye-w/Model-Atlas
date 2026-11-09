@@ -357,9 +357,6 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .lab-math-small { color: #8d8379; }
 .chart-legend { color: #93887d; }
 
-@media (max-width: 900px) {
-  .mobile-sidebar { background: #f1ede5; }
-}
 @media (max-width: 600px) {
   .hero-copy h1 { font-size: 35px; }
   .site-footer { color: #9b9085; }
@@ -683,9 +680,6 @@ body,
   background: #f7f4ef;
   border-right-color: #ebe5dc;
 }
-.mobile-sidebar {
-  background: #f7f4ef;
-}
 
 
 /* Home hero: smaller floating editorial card with a responsive motion layer. */
@@ -865,3 +859,19 @@ body,
 .sidebar-footer a.build-sha { display: inline; color: inherit; font-weight: inherit; }
 .sidebar-footer a.build-sha code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; letter-spacing: 0; }
 .sidebar-footer a.build-sha:hover code { text-decoration: underline; text-underline-offset: 2px; }
+
+/* Single sidebar: sticky column on desktop, off-canvas drawer on small screens.
+   `visibility` keeps the closed drawer out of the tab order and accessibility tree. */
+.site-sidebar { position: sticky; top: 0; height: 100vh; }
+@media (max-width: 900px) {
+  .site-sidebar {
+    position: fixed; left: 0; top: 0; z-index: 102;
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform .2s, visibility 0s linear .2s;
+  }
+  .site-sidebar.open { transform: translateX(0); visibility: visible; transition: transform .2s; }
+}
+@media (max-width: 900px) and (prefers-reduced-motion: reduce) {
+  .site-sidebar, .site-sidebar.open { transition: none; }
+}

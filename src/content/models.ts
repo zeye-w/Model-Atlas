@@ -22,6 +22,12 @@ export interface ModelDefinition {
   paper: { name: string; url: string; year: string };
   related: string[];
   color: string;
+  /** Shown in "Selected models" on the home page. */
+  featured?: boolean;
+  /** A shipped laboratory. Required when executionMode is not "planned". */
+  lab?: { href: string; title: string; description: string };
+  /** Roadmap line for a laboratory that has not shipped yet. */
+  labPlan?: string;
 }
 
 export const models: ModelDefinition[] = [
@@ -37,7 +43,8 @@ export const models: ModelDefinition[] = [
     useCases: ["Regression baseline", "Trend estimation", "Interpretable forecasting"],
     tags: ["Regression", "Optimization", "Interpretable"], executionMode: "live-training",
     paper: { name: "Least squares — historical overview", url: "https://mathworld.wolfram.com/LeastSquaresFitting.html", year: "Classical" },
-    related: ["mlp", "knn"], color: "#b96a4b"
+    related: ["mlp", "knn"], color: "#b96a4b", featured: true,
+    lab: { href: "/lab/linear-regression", title: "Linear Regression", description: "Run gradient descent in your browser with seeded synthetic data. Track every update and export a reproducible record." }
   },
   {
     slug: "knn", acronym: "KNN", name: "K-Nearest Neighbors", chineseName: "K 近邻", family: "Classical ML", paradigm: "Supervised Learning", level: "Foundation",
@@ -51,7 +58,7 @@ export const models: ModelDefinition[] = [
     useCases: ["Classification", "Similarity search", "Simple regression"],
     tags: ["Classification", "Distance", "Non-parametric"], executionMode: "planned",
     paper: { name: "Discriminatory Analysis: Nonparametric Discrimination", url: "https://doi.org/10.2172/4211277", year: "1951" },
-    related: ["decision-tree", "linear-regression"], color: "#7f8a73"
+    related: ["decision-tree", "linear-regression"], color: "#7f8a73", labPlan: "Neighborhood selection, voting and dynamic classification boundaries."
   },
   {
     slug: "decision-tree", acronym: "DT", name: "Decision Tree", chineseName: "决策树", family: "Classical ML", paradigm: "Supervised Learning", level: "Foundation",
@@ -65,7 +72,7 @@ export const models: ModelDefinition[] = [
     useCases: ["Tabular classification", "Feature interactions", "Decision support"],
     tags: ["Classification", "Tree", "Interpretable"], executionMode: "planned",
     paper: { name: "Classification and Regression Trees", url: "https://www.routledge.com/Classification-and-Regression-Trees/Breiman-Friedman-Olshen-Stone/p/book/9780412048418", year: "1984" },
-    related: ["knn", "mlp"], color: "#b08a58"
+    related: ["knn", "mlp"], color: "#b08a58", labPlan: "Watch impurity scores and recursive partitioning evolve."
   },
   {
     slug: "mlp", acronym: "MLP", name: "Multilayer Perceptron", chineseName: "多层感知机", family: "Deep Learning", paradigm: "Supervised Learning", level: "Intermediate",
@@ -79,7 +86,7 @@ export const models: ModelDefinition[] = [
     useCases: ["Regression", "Classification", "Neural network fundamentals"],
     tags: ["Neural Network", "Backpropagation", "Optimization"], executionMode: "planned",
     paper: { name: "Learning representations by back-propagating errors", url: "https://doi.org/10.1038/323533a0", year: "1986" },
-    related: ["linear-regression", "cnn", "transformer"], color: "#988373"
+    related: ["linear-regression", "cnn", "transformer"], color: "#988373", labPlan: "Inspect weight updates, activation functions and backpropagation."
   },
   {
     slug: "cnn", acronym: "CNN", name: "Convolutional Neural Network", chineseName: "卷积神经网络", family: "Deep Learning", paradigm: "Supervised / Self-supervised", level: "Intermediate",
@@ -93,7 +100,8 @@ export const models: ModelDefinition[] = [
     useCases: ["Computer vision", "Seismic interpretation", "Image segmentation"],
     tags: ["Vision", "Convolution", "Feature Maps"], executionMode: "live-training",
     paper: { name: "Gradient-Based Learning Applied to Document Recognition", url: "https://doi.org/10.1109/5.726791", year: "1998" },
-    related: ["mlp", "transformer", "pinn"], color: "#bd704f"
+    related: ["mlp", "transformer", "pinn"], color: "#bd704f", featured: true,
+    lab: { href: "/lab/cnn", title: "CNN Laboratory", description: "Inspect convolution windows, train a waveform classifier, and trace weight updates." }
   },
   {
     slug: "transformer", acronym: "TRF", name: "Transformer", chineseName: "Transformer 架构", family: "Deep Learning", paradigm: "Self-supervised / Supervised", level: "Advanced",
@@ -107,7 +115,7 @@ export const models: ModelDefinition[] = [
     useCases: ["Language models", "Vision transformers", "Cross-modal fusion"],
     tags: ["Attention", "Sequence", "Foundation Models"], executionMode: "planned",
     paper: { name: "Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", year: "2017" },
-    related: ["cnn", "mlp", "diffusion"], color: "#87796e"
+    related: ["cnn", "mlp", "diffusion"], color: "#87796e", featured: true, labPlan: "Explore attention and token interactions."
   },
   {
     slug: "diffusion", acronym: "DIF", name: "Diffusion Model", chineseName: "扩散模型", family: "Generative AI", paradigm: "Generative / Self-supervised", level: "Advanced",
@@ -140,4 +148,25 @@ export const models: ModelDefinition[] = [
 ];
 
 export const families: ModelFamily[] = ["Classical ML", "Deep Learning", "Generative AI", "Scientific ML"];
+
+export const familyDescriptions: Record<ModelFamily, string> = {
+  "Classical ML": "The foundations of inference, decisions and optimization.",
+  "Deep Learning": "From layers and convolution to contextual attention.",
+  "Generative AI": "Understand the processes behind synthetic data.",
+  "Scientific ML": "Bring equations and physical constraints into learning.",
+};
+
 export const getModel = (slug: string) => models.find((model) => model.slug === slug);
+
+export const isLiveMode = (mode: ExecutionMode) => mode === "live-training" || mode === "live-computation";
+
+/** Models with a shipped, executable laboratory. */
+export const liveLabs = models.filter((model) => model.lab && isLiveMode(model.executionMode));
+/** Models whose laboratory is on the roadmap. */
+export const plannedLabs = models.filter((model) => model.labPlan && !model.lab);
+export const featuredModels = models.filter((model) => model.featured);
+export const modelsInFamily = (family: ModelFamily) => models.filter((model) => model.family === family);
+
+/** "8" → "08", matching the editorial numbering used across the site. */
+export const pad2 = (value: number) => String(value).padStart(2, "0");
+export const countLabel = (value: number, noun: string) => `${pad2(value)} ${noun}${value === 1 ? "" : "s"}`;
