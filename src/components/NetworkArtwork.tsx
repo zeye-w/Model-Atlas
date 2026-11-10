@@ -2,11 +2,21 @@
 
 import type { PointerEvent } from "react";
 
-const positions = [
-  [45, 142], [124, 75], [155, 198], [222, 125], [292, 45], [320, 197], [399, 97], [435, 212], [515, 142],
-  [124, 296], [232, 286], [335, 316], [511, 301]
-];
-const edges = [[0,1],[0,2],[1,3],[2,3],[2,9],[3,4],[3,5],[3,6],[3,10],[4,6],[5,6],[5,10],[5,11],[6,7],[6,8],[7,8],[7,11],[8,12],[9,10],[10,11],[11,12]];
+/* A layered network drawn as an illustration: many small nodes, hairline
+   connections between adjacent layers, and two highlighted paths along which a
+   signal travels. Purely decorative (aria-hidden). */
+const W = 565, H = 365;
+const layers = [5, 8, 11, 9, 6, 2];
+const nodes = layers.map((count, l) => {
+  const x = 40 + l * ((W - 80) / (layers.length - 1));
+  const span = 40 + count * 26;
+  return Array.from({ length: count }, (_, i) => ({ x, y: H / 2 + (i - (count - 1) / 2) * (span / Math.max(1, count - 1)) * (count > 1 ? 1 : 0) }));
+});
+const paths = [[1, 2, 4, 3, 2, 0], [3, 5, 7, 6, 4, 1]];
+const onPath = (l: number, i: number) => paths.findIndex((p) => p[l] === i);
+const toPoints = (p: number[]) => p.map((i, l) => `${nodes[l][i].x},${nodes[l][i].y}`).join(" ");
+/** A stable sprinkle of lightly filled nodes, so the field is not uniform. */
+const shaded = (l: number, i: number) => ((l * 7 + i * 13) % 5) === 0;
 
 function handlePointerMove(event: PointerEvent<HTMLDivElement>) {
   if (event.pointerType === "touch" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -39,16 +49,22 @@ export function NetworkArtwork() {
     onPointerMove={handlePointerMove}
     onPointerLeave={resetPointer}
   >
-    <svg className="network-svg" viewBox="0 0 565 365" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {edges.map(([a,b],i)=><line key={i} x1={positions[a][0]} y1={positions[a][1]} x2={positions[b][0]} y2={positions[b][1]} stroke="#d9d3c6" strokeWidth="1.2" />)}
-      {positions.map(([x,y],i)=>{
-        const hub = i === 3 || i === 6;
-        return <g key={i} className="network-node">
-          {hub && <circle className={`network-pulse network-pulse-${i}`} cx={x} cy={y} r="30"/>}
-          <circle cx={x} cy={y} r={hub ? 22 : 11} fill={i === 3 ? "#c96442" : i === 6 ? "#6f8a63" : "#ffffff"} stroke={hub ? "#faf9f5" : "#cfc8ba"} strokeWidth="1.5"/>
-          <circle cx={x} cy={y} r={hub ? 6 : 3.5} fill={hub ? "#faf9f5" : "#b9b1a2"}/>
+    <svg className="network-svg" viewBox={`0 0 ${W} ${H}`} fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g stroke="#d9d3c6" strokeWidth=".6" strokeOpacity=".7">
+        {nodes.slice(0, -1).map((layer, l) => layer.map((a, i) => nodes[l + 1].map((b, j) =>
+          <line key={`${l}-${i}-${j}`} x1={a.x} y1={a.y} x2={b.x} y2={b.y}/>)))}
+      </g>
+      {paths.map((p, k) => <polyline key={`path${k}`} points={toPoints(p)} stroke={k === 0 ? "#c96442" : "#6f8a63"} strokeWidth="1.4" strokeOpacity=".55" strokeLinejoin="round"/>)}
+      {paths.map((p, k) => <polyline key={`signal${k}`} points={toPoints(p)} pathLength={100} className={`network-signal network-signal-${k}`} stroke={k === 0 ? "#c96442" : "#6f8a63"}/>)}
+      {nodes.map((layer, l) => layer.map(({ x, y }, i) => {
+        const k = onPath(l, i);
+        return <g key={`${l}-${i}`} className="network-node">
+          {k >= 0 && l === layers.length - 1 && <circle className={`network-pulse network-pulse-${k === 0 ? 3 : 6}`} cx={x} cy={y} r="12"/>}
+          <circle cx={x} cy={y} r={k >= 0 ? 6 : 4.5}
+            fill={k === 0 ? "#c96442" : k === 1 ? "#6f8a63" : shaded(l, i) ? "#ebe6dc" : "#ffffff"}
+            stroke={k >= 0 ? "#faf9f5" : "#cfc8ba"} strokeWidth={k >= 0 ? 1.5 : 1}/>
         </g>;
-      })}
+      }))}
     </svg>
   </div>;
 }

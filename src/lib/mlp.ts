@@ -1,5 +1,5 @@
 /**
- * A tiny multilayer perceptron (2 → 3 → 2) whose single SGD step is exposed
+ * A tiny multilayer perceptron (2 → H → 2, H = 2…8) whose single SGD step is exposed
  * as an explicit trace, so every number in the animation is the number the
  * algorithm actually computed.
  *
@@ -12,7 +12,9 @@
  */
 
 export const INPUTS = 2;
-export const HIDDEN = 3;
+/** Default hidden width, and the range the lab offers. */
+export const HIDDEN = 6;
+export const HIDDEN_RANGE = [2, 8] as const;
 export const OUTPUTS = 2;
 export const classNames = ["Class A", "Class B"];
 
@@ -40,13 +42,14 @@ export function makeDataset(seed: number, count = 80, noise = .18): Sample[] {
   });
 }
 
-export function makeNetwork(seed: number): Network {
+export function makeNetwork(seed: number, hidden = HIDDEN): Network {
+  if (!Number.isInteger(hidden) || hidden < 1) throw new Error("hidden width must be a positive integer");
   const rng = random(seed ^ 0x51ed);
   const glorot = (fanIn: number, fanOut: number) => (2 * rng() - 1) * Math.sqrt(6 / (fanIn + fanOut));
   return {
-    w1: Array.from({ length: HIDDEN }, () => Array.from({ length: INPUTS }, () => glorot(INPUTS, HIDDEN))),
-    b1: Array<number>(HIDDEN).fill(0),
-    w2: Array.from({ length: OUTPUTS }, () => Array.from({ length: HIDDEN }, () => glorot(HIDDEN, OUTPUTS))),
+    w1: Array.from({ length: hidden }, () => Array.from({ length: INPUTS }, () => glorot(INPUTS, hidden))),
+    b1: Array<number>(hidden).fill(0),
+    w2: Array.from({ length: OUTPUTS }, () => Array.from({ length: hidden }, () => glorot(hidden, OUTPUTS))),
     b2: Array<number>(OUTPUTS).fill(0),
   };
 }

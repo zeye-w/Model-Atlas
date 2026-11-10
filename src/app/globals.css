@@ -234,6 +234,9 @@ code, kbd { font-family: var(--font-mono); font-size: .88em; }
 .network-node { animation: node-breathe 4s ease-in-out infinite alternate; }
 .network-node:nth-child(3n) { animation-delay: 1.3s; }
 .network-pulse { fill: none; stroke: var(--accent); stroke-width: 1; opacity: 0; transform-box: fill-box; transform-origin: center; animation: node-pulse 3.2s ease-out infinite; }
+.network-signal { fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 6 110; stroke-dashoffset: 6; animation: network-signal 3.6s cubic-bezier(.45, 0, .55, 1) infinite; }
+.network-signal-1 { animation-delay: 1.8s; }
+@keyframes network-signal { from { stroke-dashoffset: 6; } 70%, to { stroke-dashoffset: -100; } }
 .network-pulse-6 { stroke: var(--sage); animation-delay: 1.6s; }
 @keyframes node-breathe { from { opacity: .82; } to { opacity: 1; } }
 @keyframes node-pulse { 0% { opacity: .5; transform: scale(.8); } 70%, 100% { opacity: 0; transform: scale(1.5); } }
@@ -378,7 +381,8 @@ code, kbd { font-family: var(--font-mono); font-size: .88em; }
 
 /* Formulas (src/components/Formula.tsx) */
 .formula { position: relative; margin: 0 0 18px; }
-.formula-render { overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+/* position: relative keeps KaTeX's visually hidden MathML inside the scroll box. */
+.formula-render { position: relative; overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
 .formula-render .katex-display { margin: 0; }
 .formula-box { padding: 26px 18px 22px; background: var(--surface-muted); border: 1px solid var(--border); border-radius: var(--radius-md); }
 .formula-box .katex { font-size: 1.12em; color: var(--text); }

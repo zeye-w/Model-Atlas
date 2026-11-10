@@ -29,11 +29,13 @@
 .mlp-diagram-wrap { margin: 2px -4px 0; }
 .mlp-diagram { display: block; width: 100%; height: auto; overflow: visible; font-family: var(--font-sans); }
 .mlp-col-label { font-size: 12.5px; font-weight: 500; fill: var(--text-tertiary); }
-.mlp-node-value { font-size: 14px; font-weight: 600; fill: var(--text); font-variant-numeric: tabular-nums; }
+.mlp-node-value { font-size: 12.5px; font-weight: 600; fill: var(--text); font-variant-numeric: tabular-nums; paint-order: stroke; stroke: #fff; stroke-width: 4px; stroke-linejoin: round; }
+.mlp-node-name { font-weight: 500; fill: var(--text-tertiary); }
+.mlp-target { fill: var(--accent-text); font-weight: 600; }
 .mlp-node-sub { font-size: 11px; font-weight: 500; fill: var(--text-tertiary); font-variant-numeric: tabular-nums; }
-.mlp-badge { font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.mlp-badge { font-size: 10.5px; font-weight: 600; font-variant-numeric: tabular-nums; paint-order: stroke; stroke: #fff; stroke-width: 4px; stroke-linejoin: round; }
 .mlp-node-fill { transition: fill .5s, fill-opacity .5s; }
-.mlp-node-ring { fill: none; stroke: var(--accent); stroke-width: 1.5; opacity: 0; transition: opacity .3s; }
+.mlp-node-ring { fill: none; stroke: var(--accent); stroke-width: 1.2; opacity: 0; transition: opacity .3s; }
 .mlp-node.is-active .mlp-node-ring { opacity: .55; animation: mlp-ring 1.6s ease-in-out infinite; }
 .dir-backward .mlp-node.is-active .mlp-node-ring { stroke: var(--sage); }
 .mlp-node-value, .mlp-node-sub { animation: mlp-fade .35s var(--ease) both; }
@@ -41,7 +43,7 @@
 .mlp-edge { stroke-linecap: round; transition: stroke-width .9s var(--ease), stroke-opacity .9s var(--ease), stroke .9s; }
 /* A short dash travelling along the edge: pathLength=100, dash 9, gap ≥ 100 */
 .mlp-flow {
-  stroke-width: 3.2; stroke-linecap: round; fill: none;
+  stroke-width: 2.6; stroke-linecap: round; fill: none;
   stroke-dasharray: 9 120; stroke-dashoffset: 9;
   animation: mlp-flow 1.25s cubic-bezier(.45, 0, .55, 1) infinite;
 }
@@ -72,9 +74,19 @@
 .mlp-explain > p { margin: 12px 0; font-size: 15px; line-height: 1.65; color: var(--text-secondary); max-width: 72ch; }
 .formula.mlp-formula { margin: 0; padding: 16px 14px 12px; background: var(--surface-muted); border: 1px solid var(--border); border-radius: var(--radius-md); }
 .formula.mlp-formula .katex { font-size: 1.08em; }
-.mlp-numbers { margin-top: 6px; }
-.mlp-numbers td { text-align: left; font-family: var(--font-mono); font-size: 12.5px; color: var(--text); white-space: nowrap; }
-.mlp-numbers th { width: 1%; white-space: nowrap; }
+.mlp-numbers { margin-top: 10px; overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-md); }
+.mlp-numbers table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.mlp-numbers th, .mlp-numbers td { padding: 7px 12px; border-top: 1px solid var(--border); text-align: left; vertical-align: baseline; }
+.mlp-numbers tr:first-child th, .mlp-numbers tr:first-child td { border-top: 0; }
+.mlp-numbers th { width: 1%; white-space: nowrap; font-weight: 600; color: var(--text-secondary); background: var(--surface-muted); }
+.mlp-numbers td { font-family: var(--font-mono); font-size: 12.5px; color: var(--text); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+/* Hidden-width picker */
+.mlp-width { margin-top: 14px; }
+.mlp-segmented { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; padding: 3px; background: var(--surface-active); border-radius: 10px; }
+.mlp-segmented button { height: 30px; border: 0; border-radius: 7px; background: transparent; font-size: 13.5px; font-weight: 500; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.mlp-segmented button:hover { color: var(--text); }
+.mlp-segmented button[aria-pressed="true"] { background: var(--surface); color: var(--text); box-shadow: var(--shadow-sm), 0 0 0 1px var(--border); }
 
 /* Side panel */
 .mlp-map { display: block; width: 100%; max-width: 320px; height: auto; margin: 0 auto; border-radius: var(--radius-md); border: 1px solid var(--border); background: #fdfcfa; }
@@ -89,11 +101,10 @@
 @media (max-width: 640px) {
   .mlp-stage, .mlp-explain { padding: 16px; }
   /* The diagram scales down on phones; enlarge its text in SVG units to stay legible. */
-  .mlp-node-value { font-size: 19px; }
+  .mlp-node-value { font-size: 17px; }
   .mlp-node-sub { font-size: 14px; }
-  .mlp-col-label { font-size: 17px; }
-  .mlp-badge { font-size: 13.5px; }
-  .mlp-prob .mlp-node-sub { font-size: 13px; }
+  .mlp-col-label { font-size: 16px; }
+  .mlp-badge { font-size: 14px; }
   .mlp-speed { margin-left: 0; }
   .mlp-transport .btn { flex: 1; }
 }
