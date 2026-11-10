@@ -4,16 +4,18 @@
 
 Model Atlas is a public, research-oriented learning platform. It connects model families, architecture diagrams, mathematical explanations, references and small reproducible experiments in one interface.
 
-## Phase 1 foundation
+## What's in it
 
-- Responsive site shell and light design system
-- Searchable catalogue of eight representative models
-- Algorithm family atlas with navigable relationships
-- Shared model detail pages with overview, architecture, mathematics and references
-- An actual, browser-side linear regression gradient descent laboratory
-- Reproducible sample generation, loss history and JSON/SVG export
+- Searchable catalogue of 13 models in five families, each with architecture, KaTeX formulas, strengths, limitations and references
+- Algorithm atlas with navigable relationships
+- Live laboratories that compute in the browser on seeded data:
+  - **Linear regression** — gradient descent, JSON/SVG export
+  - **MLP** — one SGD step animated phase by phase (forward pass, backpropagation, update)
+  - **CNN** — convolution explorer and a Web Worker training bench
+  - **Regression** — AdaBoost, Gradient Boosting, Random Forest, CatBoost-style boosting and an RBF network on the same data, replayable round by round and compared side by side
+- Every lab states its execution mode and what it simplifies; numerical code is covered by tests (finite-difference gradient checks, algorithm invariants)
 
-Other model laboratories are marked as planned; no animation is presented as real training.
+Remaining models are marked as planned; no animation is presented as real training.
 
 ## Quick start
 

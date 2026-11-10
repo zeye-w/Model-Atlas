@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
 import test from "node:test";
-import { countLabel, families, featuredModels, getModel, isLiveMode, liveLabs, models, modelsInFamily, pad2, plannedLabs } from "../src/content/models";
+import { countLabel, families, featuredModels, getModel, isLiveMode, labPages, labPath, liveLabs, models, modelsInFamily, pad2, plannedLabs } from "../src/content/models";
 
 test("model slugs are unique and links resolve", () => {
   assert.equal(new Set(models.map((model)=>model.slug)).size,models.length);
@@ -16,7 +16,9 @@ test("model slugs are unique and links resolve", () => {
 test("live labs have a registered execution mode", () => {
   assert.equal(getModel("linear-regression")?.executionMode,"live-training");
   assert.equal(getModel("cnn")?.executionMode,"live-training");
-  assert.deepEqual(liveLabs.map((model)=>model.slug),["linear-regression","mlp","cnn"]);
+  assert.deepEqual(labPages.map((lab)=>lab.href),["/lab/linear-regression","/lab/mlp","/lab/cnn","/lab/regression"]);
+  assert.deepEqual(labPages.find((lab)=>lab.href==="/lab/regression")!.models.map((m)=>m.slug),["adaboost","gradient-boosting","random-forest","catboost","rbf-network"]);
+  for (const model of liveLabs) if (labPath(model.lab!.href) === "/lab/regression") assert.equal(model.lab!.href, `/lab/regression?model=${model.slug}`);
 });
 
 test("execution mode and lab metadata agree", () => {
@@ -32,7 +34,7 @@ test("execution mode and lab metadata agree", () => {
 
 test("every shipped lab has a route", () => {
   for (const model of liveLabs) {
-    const route = `src/app${model.lab!.href}/page.tsx`;
+    const route = `src/app${labPath(model.lab!.href)}/page.tsx`;
     assert.ok(existsSync(route), `${model.slug} links to ${model.lab!.href}, but ${route} does not exist`);
   }
 });
