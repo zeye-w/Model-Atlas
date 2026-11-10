@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowUpRight, Asterisk, Atom, BookOpenText, Boxes, Compass, FlaskConical, GitCompareArrows, Github, GraduationCap, Menu, Search, X } from "lucide-react";
+import { ArrowUpRight, Atom, BookOpenText, Boxes, Compass, FlaskConical, GitCompareArrows, Github, GraduationCap, Menu, Search, Waypoints, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { buildCommitUrl, buildSha } from "@/lib/build-info";
 
@@ -20,22 +20,22 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   return <>
     <Link className="brand" href="/" onClick={onNavigate} aria-label="Model Atlas home">
-      <span className="brand-emblem"><Asterisk size={25} strokeWidth={1.55} /></span>
-      <span><strong>MODEL ATLAS</strong><small>AI RESEARCH ATLAS</small></span>
+      <span className="brand-emblem"><Waypoints size={17} strokeWidth={1.8} /></span>
+      <span><strong>Model Atlas</strong><small>How models learn</small></span>
     </Link>
-    <div className="sidebar-section-label">WORKSPACE <span>01</span></div>
+    <Link className="sidebar-search" href="/models" onClick={onNavigate}><Search size={15}/> Search models</Link>
     <nav className="sidebar-nav" aria-label="Main navigation">
       {navigation.map(({ href, label, icon: Icon }) => {
         const active = href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/");
         return <Link onClick={onNavigate} className={`nav-link ${active ? "active" : ""}`} href={href} key={href} aria-current={active ? "page" : undefined}>
-          <Icon size={18} strokeWidth={1.75} /><span>{label}</span>{active && <span className="nav-dot" />}
+          <Icon size={17} strokeWidth={1.75} /><span>{label}</span>
         </Link>;
       })}
     </nav>
     <div className="sidebar-footer">
-      <div className="sidebar-note"><span className="status-pulse"/><span>RESEARCH BUILD · 0.1 · <a className="build-sha" href={buildCommitUrl} target="_blank" rel="noreferrer" title="Commit this build was made from"><code>{buildSha}</code></a></span></div>
-      <p>A thoughtful space to study how intelligent systems learn.</p>
-      <a href="https://github.com/zeye-w/Model-Atlas" target="_blank" rel="noreferrer"><Github size={16}/> View on GitHub <ArrowUpRight size={14}/></a>
+      <p>An open, research-oriented space to study how intelligent systems learn.</p>
+      <a className="sidebar-link" href="https://github.com/zeye-w/Model-Atlas" target="_blank" rel="noreferrer"><Github size={15}/> View on GitHub <ArrowUpRight size={13}/></a>
+      <div className="sidebar-note"><span className="status-pulse"/><span>Version 0.1 · <a className="build-sha" href={buildCommitUrl} target="_blank" rel="noreferrer" title="Commit this build was made from"><code>{buildSha}</code></a></span></div>
     </div>
   </>;
 }
@@ -55,7 +55,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const targets = document.querySelectorAll<HTMLElement>(
-      ".page-wrap > *, .section-block, .family-card, .model-card, .lab-panel, .lab-list-card, .resource-card, .sequence-item, .atlas-family"
+      ".page-wrap > *, .family-card, .model-card, .lab-list-card, .resource-card, .atlas-family"
     );
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduceMotion || !("IntersectionObserver" in window)) {
@@ -85,14 +85,10 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
     <div className="main-shell">
       <header className="topbar">
         <div className="topbar-left">
-          <button className="icon-button mobile-menu-trigger" onClick={() => setMenuOpen((v) => !v)} aria-label={menuOpen ? "Close navigation" : "Open navigation"} aria-expanded={menuOpen} aria-controls="site-sidebar">{menuOpen ? <X size={21}/> : <Menu size={21}/>}</button>
-          <span className="topbar-eyebrow">MODEL ATLAS / RESEARCH STUDIO</span>
-          <span className="topbar-separator"/><span className="topbar-location">A clearer view of how models learn.</span>
+          <button className="icon-button mobile-menu-trigger" onClick={() => setMenuOpen((v) => !v)} aria-label={menuOpen ? "Close navigation" : "Open navigation"} aria-expanded={menuOpen} aria-controls="site-sidebar">{menuOpen ? <X size={20}/> : <Menu size={20}/>}</button>
+          <Link className="topbar-brand" href="/">Model Atlas</Link>
         </div>
-        <div className="topbar-actions">
-          <Link className="topbar-search" href="/models"><Search size={15}/> <span>Search models</span><kbd>↗</kbd></Link>
-          <span className="topbar-version">ALPHA / 0.1</span>
-        </div>
+        <Link className="icon-button" href="/models" aria-label="Search models"><Search size={18}/></Link>
       </header>
       <main id="main-content" className="main-content">{children}</main>
       <footer className="site-footer"><span>© 2026 Model Atlas · An open research project</span><span>Built for curiosity, grounded in mathematics.</span></footer>

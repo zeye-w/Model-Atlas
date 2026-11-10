@@ -90,15 +90,15 @@ export function Training({ exportJson, active }: { exportJson: (value: object) =
   return <div className="cnn-grid" id="cnn-training">
     <section className="cnn-card">
       <h2>Training controls</h2>
-      <NumberField label="Learning Rate" min={.001} max={.2} step={.001} value={rate} change={setRate} disabled={locked}/>
-      <NumberField label="Batch Size" min={1} max={64} value={batchSize} change={setBatchSize} disabled={locked}/>
+      <div className="cnn-fields"><NumberField label="Learning rate" min={.001} max={.2} step={.001} value={rate} change={setRate} disabled={locked}/>
+      <NumberField label="Batch size" min={1} max={64} value={batchSize} change={setBatchSize} disabled={locked}/>
       <NumberField label="Epochs" min={1} max={100} value={epochs} change={setEpochs} disabled={running || tested}/>
-      <NumberField label="Seed" min={0} max={4294967295} value={seed} change={value => { reset(value); setSeed(value); }} disabled={locked}/>
+      <NumberField label="Seed" min={0} max={4294967295} value={seed} change={value => { reset(value); setSeed(value); }} disabled={locked}/></div>
       <div className="cnn-actions">
-        <button disabled={running || tested || epoch >= epochs} onClick={() => { setTarget(epochs); setRunning(true); }}>Train</button>
+        <button className="primary" disabled={running || tested || epoch >= epochs} onClick={() => { setTarget(epochs); setRunning(true); }}>Train</button>
         <button disabled={!running} onClick={() => setRunning(false)}>Pause</button>
         <button disabled={running || tested || epoch >= target} onClick={() => setRunning(true)}>Resume</button>
-        <button disabled={running || tested} onClick={() => { setTarget(epoch + 1); setRunning(true); }}>Single Epoch</button>
+        <button disabled={running || tested} onClick={() => { setTarget(epoch + 1); setRunning(true); }}>One epoch</button>
         <button onClick={() => reset()}>Reset</button>
       </div>
       <p aria-live="polite">Epoch {epoch}{offset > 0 && " · " + offset + "/210 samples in current epoch"}</p>
@@ -119,7 +119,7 @@ export function Training({ exportJson, active }: { exportJson: (value: object) =
       <Metrics title="Validation metrics" result={latest.validation}/>
       <h3>Independent test</h3>
       <p>Finalize the run to evaluate the held-out set. Reset starts a fresh run.</p>
-      <button disabled={tested || running || epoch === 0 || offset !== 0} onClick={() => setTested(true)}>Finalize &amp; evaluate test set</button>
+      <button disabled={tested || running || epoch === 0 || offset !== 0} onClick={() => setTested(true)}>Evaluate on test set</button>
       {test && probabilities && <>
         <Metrics title="Test metrics · 45 samples" result={test}/>
         <NumberField label="Test sample" min={1} max={45} value={sampleIndex + 1} change={n => setSampleIndex(n - 1)}/>
@@ -130,7 +130,7 @@ export function Training({ exportJson, active }: { exportJson: (value: object) =
     </section>
     <section className="cnn-card">
       <h2>Backpropagation trace</h2>
-      <p>Forward Pass → Loss → Backward Pass → Gradient → Weight Update</p>
+      <p className="cnn-steps">Forward pass → loss → backward pass → gradient → weight update</p>
       <label>Conv1D layer<select value={layer} onChange={e => { setLayer(e.target.value === "first" ? "first" : "second"); select(0); }}><option value="first">Conv1D 1</option><option value="second">Conv1D 2</option></select></label>
       <label>Conv1D filter<select value={filter} onChange={e => select(+e.target.value)}>{model[layer].weights.map((_, f) => <option key={f} value={f}>{f + 1}</option>)}</select></label>
       {trace ? <>

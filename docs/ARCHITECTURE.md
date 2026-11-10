@@ -12,6 +12,18 @@
   `TrainingSession`, so a run is bit-identical wherever it executes and however
   it is paused or chunked (covered by `tests/cnn-session.test.ts`).
 
+## Visual design
+
+- One stylesheet, `src/app/globals.css`, built on CSS custom properties
+  (colour, type, radius, shadow). Route-specific styles (the CNN lab) live
+  next to the route and use the same tokens.
+- Calm, warm editorial look: ivory canvas, Source Serif 4 for headings,
+  Inter for interface text, one terracotta accent. Fonts are self-hosted
+  through Fontsource; no third-party brand assets are used.
+- Text colour tokens meet WCAG AA (≥ 4.5:1) on every surface they are used on.
+  The bright accent (`--accent`) is for icons, lines and focus rings; links
+  use `--accent-text` and filled buttons use `--accent-strong`.
+
 ## Execution modes
 
 | Mode | Meaning |

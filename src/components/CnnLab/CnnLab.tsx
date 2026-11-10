@@ -5,7 +5,7 @@ import { Explorer } from "./Explorer";
 import { Training } from "./Training";
 import { Theory } from "./Theory";
 
-const tabs = ["CNN Explorer", "CNN Training Bench", "Theory"];
+const tabs = ["Explorer", "Training bench", "Theory"];
 
 function exportJson(value: object) {
   const data = { schemaVersion: "model-atlas.cnn.v1", modelId: "cnn", ...value };

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { SiteShell } from "@/components/SiteShell";
+import "@fontsource-variable/inter/wght.css";
+import "@fontsource-variable/source-serif-4/opsz.css";
+import "@fontsource-variable/source-serif-4/opsz-italic.css";
 import "./globals.css";
-import "./claude-theme.css";
 
 export const metadata: Metadata = {
   title: { default: "Model Atlas — Interactive AI Research", template: "%s | Model Atlas" },
