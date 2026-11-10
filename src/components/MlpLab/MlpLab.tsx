@@ -2,11 +2,11 @@
 
 import { useEffect, useMemo, useReducer, useState, type ReactNode } from "react";
 import { ChevronLeft, ChevronRight, FastForward, Pause, Play, RotateCcw } from "lucide-react";
-import { evaluate, forward, makeDataset, makeNetwork, phases, sampleOrder, sgdStep, type Network, type Sample, type StepTrace } from "@/lib/mlp";
+import { HIDDEN, HIDDEN_RANGE, evaluate, forward, makeDataset, makeNetwork, phases, sampleOrder, sgdStep, type Network, type Sample, type StepTrace } from "@/lib/mlp";
 import { NetworkDiagram, fmt } from "./NetworkDiagram";
 
 interface State {
-  seed: number; rate: number;
+  seed: number; rate: number; hidden: number;
   data: Sample[];
   net: Network;           // parameters before the step being animated
   epoch: number; cursor: number; order: number[];
@@ -17,7 +17,7 @@ interface State {
 }
 
 type Action =
-  | { type: "reset"; seed: number; rate: number }
+  | { type: "reset"; seed: number; rate: number; hidden: number }
   | { type: "next" } | { type: "previous" }
   | { type: "finish-epoch" }
   | { type: "rate"; rate: number };
@@ -27,10 +27,10 @@ function prepare(base: Omit<State, "trace" | "phase">): State {
   return { ...base, trace: sgdStep(base.net, sample, base.rate), phase: 0 };
 }
 
-function init(seed: number, rate: number): State {
+function init(seed: number, rate: number, hidden: number): State {
   const data = makeDataset(seed);
-  const net = makeNetwork(seed);
-  return prepare({ seed, rate, data, net, epoch: 0, cursor: 0, order: sampleOrder(data.length, seed, 0), updates: 0, history: [evaluate(net, data)] });
+  const net = makeNetwork(seed, hidden);
+  return prepare({ seed, rate, hidden, data, net, epoch: 0, cursor: 0, order: sampleOrder(data.length, seed, 0), updates: 0, history: [evaluate(net, data)] });
 }
 
 /** Apply the current trace's update and load the next sample. */
@@ -44,7 +44,7 @@ function commit(state: State): Omit<State, "trace" | "phase"> {
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
-    case "reset": return init(action.seed, action.rate);
+    case "reset": return init(action.seed, action.rate, action.hidden);
     case "rate": return { ...state, rate: action.rate, trace: sgdStep(state.net, state.trace.sample, action.rate) };
     case "previous": return { ...state, phase: Math.max(0, state.phase - 1) };
     case "next":
@@ -62,7 +62,7 @@ function reducer(state: State, action: Action): State {
 const SPEEDS = [{ label: "Slow", ms: 2600 }, { label: "Normal", ms: 1500 }, { label: "Fast", ms: 700 }];
 
 export function MlpLab({ phaseFormulas, phaseSummaries }: { phaseFormulas: ReactNode[]; phaseSummaries: string[] }) {
-  const [state, dispatch] = useReducer(reducer, undefined, () => init(42, .1));
+  const [state, dispatch] = useReducer(reducer, undefined, () => init(42, .1, HIDDEN));
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
   const { trace, phase } = state;
@@ -133,12 +133,19 @@ export function MlpLab({ phaseFormulas, phaseSummaries }: { phaseFormulas: React
           <input type="range" min="0.01" max="0.5" step="0.01" value={state.rate} onChange={(e) => dispatch({ type: "rate", rate: Number(e.target.value) })}/></label>
         <label className="input-field">Random seed
           <input className="field-control" type="number" min="0" max="999999" value={state.seed}
-            onChange={(e) => { setPlaying(false); dispatch({ type: "reset", seed: Math.min(999999, Math.max(0, Number(e.target.value) || 0)), rate: state.rate }); }}/></label>
+            onChange={(e) => { setPlaying(false); dispatch({ type: "reset", seed: Math.min(999999, Math.max(0, Number(e.target.value) || 0)), rate: state.rate, hidden: state.hidden }); }}/></label>
+        <div className="input-field mlp-width">Hidden units
+          <div className="mlp-segmented" role="group" aria-label="Hidden units">
+            {Array.from({ length: HIDDEN_RANGE[1] - HIDDEN_RANGE[0] + 1 }, (_, i) => HIDDEN_RANGE[0] + i).map((n) =>
+              <button key={n} type="button" aria-pressed={state.hidden === n}
+                onClick={() => { setPlaying(false); dispatch({ type: "reset", seed: state.seed, rate: state.rate, hidden: n }); }}>{n}</button>)}
+          </div>
+        </div>
         <div className="lab-controls">
           <button type="button" className="btn" onClick={() => { setPlaying(false); dispatch({ type: "finish-epoch" }); }}><FastForward size={14}/> Finish epoch</button>
-          <button type="button" className="btn" onClick={() => { setPlaying(false); dispatch({ type: "reset", seed: state.seed, rate: state.rate }); }}><RotateCcw size={14}/> Reset</button>
+          <button type="button" className="btn" onClick={() => { setPlaying(false); dispatch({ type: "reset", seed: state.seed, rate: state.rate, hidden: state.hidden }); }}><RotateCcw size={14}/> Reset</button>
         </div>
-        <p className="training-meta">“Finish epoch” applies the remaining updates of this epoch without animation, using exactly the same computation.</p>
+        <p className="training-meta">Changing the width or seed starts a fresh network. With only 2 hidden units, training can get stuck on XOR for some seeds — try seed 4. “Finish epoch” applies the rest of this epoch without animation, using exactly the same computation.</p>
       </section>
     </aside>
   </div>;
@@ -156,12 +163,12 @@ function expand(weights: number[], inputs: number[], bias: number) {
 function PhaseNumbers({ trace, phase }: { trace: StepTrace; phase: number }) {
   const { sample, before: n } = trace;
   const x = sample.x;
-  const sub = ["₁", "₂", "₃"];
+  const sub = (i: number) => String(i + 1).replace(/\d/g, (d) => "₀₁₂₃₄₅₆₇₈₉"[Number(d)]);
   const rows: [string, string][] = (() => {
     switch (phases[phase].id) {
       case "input": return [["x₁", fmt(x[0], 3)], ["x₂", fmt(x[1], 3)], ["True class", sample.y === 0 ? "A  (x₁·x₂ > 0)" : "B  (x₁·x₂ < 0)"]];
-      case "hidden-sum": return trace.z1.map((z, j) => [`z${sub[j]}`, `${expand(n.w1[j], x, n.b1[j])} = ${fmt(z, 3)}`]);
-      case "hidden-act": return trace.h.map((h, j) => [`h${sub[j]}`, `tanh(${fmt(trace.z1[j], 3)}) = ${fmt(h, 3)}`]);
+      case "hidden-sum": return trace.z1.map((z, j) => [`z${sub(j)}`, `${expand(n.w1[j], x, n.b1[j])} = ${fmt(z, 3)}`]);
+      case "hidden-act": return trace.h.map((h, j) => [`h${sub(j)}`, `tanh(${fmt(trace.z1[j], 3)}) = ${fmt(h, 3)}`]);
       case "output-sum": return trace.z2.map((z, k) => [k === 0 ? "z_A" : "z_B", `${expand(n.w2[k], trace.h, n.b2[k])} = ${fmt(z, 3)}`]);
       case "softmax": return [["p_A", fmt(trace.p[0], 3)], ["p_B", fmt(trace.p[1], 3)], ["Loss", `−ln p_${sample.y === 0 ? "A" : "B"} = ${fmt(trace.loss, 4)}`]];
       case "output-grad": return [
@@ -170,22 +177,19 @@ function PhaseNumbers({ trace, phase }: { trace: StepTrace; phase: number }) {
         ["∂L/∂W² (B)", trace.gradW2[1].map((g) => fmt(g, 3)).join("   ")],
       ];
       case "hidden-grad": return [
-        ...trace.delta1.map((d, j): [string, string] => [`δ${sub[j]}`, `${fmt(trace.backHidden[j], 3)} × (1 − ${fmt(trace.h[j])}²) = ${fmt(d, 4)}`]),
-        ...trace.gradW1.map((row, j): [string, string] => [`∂L/∂W¹ (h${sub[j]})`, row.map((g) => fmt(g, 4)).join("   ")]),
+        ...trace.delta1.map((d, j): [string, string] => [`δ${sub(j)}`, `${fmt(trace.backHidden[j], 3)} × (1 − ${fmt(trace.h[j])}²) = ${fmt(d, 4)}    ∂L/∂W¹ = (${trace.gradW1[j].map((g) => fmt(g, 4)).join(", ")})`]),
       ];
       case "update": {
-        const pairs: [string, number, number][] = [
-          ...n.w1.flatMap((row, j) => row.map((w, i): [string, number, number] => [`W¹ h${sub[j]}←x${sub[i]}`, w, trace.after.w1[j][i]])),
-          ...n.w2.flatMap((row, k) => row.map((w, j): [string, number, number] => [`W² ${k === 0 ? "A" : "B"}←h${sub[j]}`, w, trace.after.w2[k][j]])),
-        ];
+        const change = (a: number, b: number) => `${fmt(a, 3)}→${fmt(b, 3)}`;
         return [
-          ...pairs.map(([label, a, b]): [string, string] => [label, `${fmt(a, 3)} → ${fmt(b, 3)}`]),
+          ...n.w1.map((row, j): [string, string] => [`h${sub(j)}`,
+            `in  x₁ ${change(row[0], trace.after.w1[j][0])}  x₂ ${change(row[1], trace.after.w1[j][1])}   ·   out  A ${change(n.w2[0][j], trace.after.w2[0][j])}  B ${change(n.w2[1][j], trace.after.w2[1][j])}`]),
           ["Loss on this sample", `${fmt(trace.loss, 4)} → ${fmt(trace.lossAfter, 4)}`],
         ];
       }
     }
   })();
-  return <div className="cnn-table mlp-numbers"><table><tbody>
+  return <div className="mlp-numbers"><table><tbody>
     {rows.map(([k, v]) => <tr key={k}><th scope="row">{k}</th><td>{v}</td></tr>)}
   </tbody></table></div>;
 }
