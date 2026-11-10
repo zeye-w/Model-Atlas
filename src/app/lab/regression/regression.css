@@ -1,0 +1,57 @@
+/* Regression laboratory — route-scoped styles on the tokens in globals.css. */
+.reg-lab {
+  display: grid; gap: 16px; align-items: start;
+  grid-template-columns: minmax(0, 1.75fr) minmax(280px, .85fr);
+  grid-template-areas: "tabs tabs" "main side" "detail side" "errors side" "compare compare";
+}
+.reg-tabs { grid-area: tabs; display: inline-flex; flex-wrap: wrap; gap: 2px; justify-self: start; padding: 3px; background: var(--surface-active); border-radius: 12px; }
+.reg-tabs [role="tab"] { padding: 7px 14px; border: 0; border-radius: 9px; background: transparent; font-size: 14px; font-weight: 500; color: var(--text-secondary); }
+.reg-tabs [role="tab"]:hover { color: var(--text); }
+.reg-tabs [role="tab"][aria-selected="true"] { background: var(--surface); color: var(--text); box-shadow: var(--shadow-sm), 0 0 0 1px var(--border); }
+.reg-main { grid-area: main; }
+.reg-detail { grid-area: detail; }
+.reg-errors { grid-area: errors; }
+.reg-side { grid-area: side; display: grid; gap: 16px; min-width: 0; }
+.reg-compare { grid-area: compare; }
+.reg-side .btn { margin-top: 4px; }
+
+.reg-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.reg-metrics { display: flex; gap: 16px; font-size: 13px; color: var(--text-tertiary); }
+.reg-metrics strong { display: block; font-size: 19px; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+
+.reg-plot { display: block; width: 100%; height: auto; font-family: var(--font-sans); }
+.reg-axes line { stroke: #eeebe4; }
+.reg-axes text, .reg-caption, .reg-legend text { font-size: 11px; fill: var(--text-tertiary); font-variant-numeric: tabular-nums; }
+.reg-legend text { dominant-baseline: middle; }
+.reg-truth { fill: none; stroke: #6f8a63; stroke-width: 1.6; stroke-dasharray: 6 5; opacity: .9; }
+.reg-curve { fill: none; stroke: #c96442; stroke-width: 2.6; stroke-linejoin: round; }
+.reg-step { stroke-width: 2; }
+.reg-faint { fill: none; stroke-width: 1; stroke-opacity: .28; }
+.reg-train { fill: #a69a88; stroke: #fff; stroke-width: 1; transition: r .25s; }
+.reg-test { fill: #fff; stroke: #8f8577; stroke-width: 1.3; }
+
+.reg-transport { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; padding-top: 12px; border-top: 1px solid var(--border); }
+.reg-scrub { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 220px; font-size: 13px; color: var(--text-tertiary); white-space: nowrap; }
+.reg-scrub strong { color: var(--text); font-variant-numeric: tabular-nums; }
+.reg-scrub input { flex: 1; min-width: 0; }
+.reg-note { margin-top: 10px; font-size: 14px; line-height: 1.6; color: var(--text-secondary); }
+
+.reg-table { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-md); }
+.reg-table table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.reg-table th, .reg-table td { padding: 9px 14px; border-top: 1px solid var(--border); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.reg-table thead th { border-top: 0; background: var(--surface-muted); font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+.reg-table th:first-child { text-align: left; }
+.reg-table tbody th button { padding: 0; border: 0; background: none; font-weight: 550; color: var(--text); text-align: left; }
+.reg-table tbody th button:hover { color: var(--accent-text); text-decoration: underline; text-underline-offset: 3px; }
+.reg-table tr.is-current { background: var(--accent-soft); }
+.reg-table td.is-best { font-weight: 650; color: var(--sage-text); }
+
+@media (max-width: 1080px) {
+  .reg-lab { grid-template-columns: minmax(0, 1fr); grid-template-areas: "tabs" "main" "side" "detail" "errors" "compare"; }
+  .reg-side { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+}
+@media (max-width: 640px) {
+  .reg-tabs { display: flex; flex-wrap: nowrap; overflow-x: auto; justify-self: stretch; scrollbar-width: none; }
+  .reg-tabs [role="tab"] { flex-shrink: 0; }
+  .reg-axes text, .reg-caption, .reg-legend text { font-size: 15px; }
+}

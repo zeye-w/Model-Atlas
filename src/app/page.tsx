@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Atom, BookOpenText, FlaskConical, GitBranch } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Atom, BookOpenText, FlaskConical, GitBranch, Trees } from "lucide-react";
 import { ModelCard } from "@/components/ModelCard";
 import { NetworkArtwork } from "@/components/NetworkArtwork";
-import { familyDescriptions, families, featuredModels, liveLabs, modelsInFamily, models, type ModelFamily } from "@/content/models";
+import { familyDescriptions, families, featuredModels, labPages, modelsInFamily, models, type ModelFamily } from "@/content/models";
 
 const familyStyle: Record<ModelFamily, { icon: typeof GitBranch; hue: string }> = {
   "Classical ML": { icon: GitBranch, hue: "sage" },
+  "Ensemble Learning": { icon: Trees, hue: "ensemble" },
   "Deep Learning": { icon: Atom, hue: "blue" },
   "Generative AI": { icon: BookOpenText, hue: "coral" },
   "Scientific ML": { icon: FlaskConical, hue: "gold" },
@@ -26,7 +27,7 @@ export default function HomePage() {
         <div className="hero-facts">
           <span><strong>{models.length}</strong> curated models</span>
           <span><strong>{families.length}</strong> model families</span>
-          <span><strong>{liveLabs.length}</strong> live {liveLabs.length === 1 ? "experiment" : "experiments"}</span>
+          <span><strong>{labPages.length}</strong> live {labPages.length === 1 ? "laboratory" : "laboratories"}</span>
         </div>
       </div>
       <NetworkArtwork />
