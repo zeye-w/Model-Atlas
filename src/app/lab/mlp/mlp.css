@@ -1,4 +1,5 @@
-/* MLP laboratory — route-scoped styles on the tokens in globals.css. */
+/* MLP laboratory — route-scoped styles on the tokens in globals.css.
+   The stepper, transport and explanation panel live in ../steps.css. */
 .mlp-lab {
   display: grid; gap: 16px; align-items: start;
   grid-template-columns: minmax(0, 1.7fr) minmax(290px, .9fr);
@@ -7,23 +8,6 @@
 .mlp-stage { grid-area: stage; min-width: 0; padding: 18px 20px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); }
 .mlp-explain { grid-area: explain; min-width: 0; padding: 22px 24px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); }
 .mlp-side { grid-area: side; display: grid; gap: 16px; min-width: 0; }
-
-/* Phase stepper */
-.mlp-phases { display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 6px; padding: 0; list-style: none; }
-.mlp-phases li {
-  display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;
-  padding: 5px 10px 5px 6px; border-radius: 999px; font-size: 12.5px; font-weight: 500; color: var(--text-tertiary);
-  transition: background .2s, color .2s;
-}
-.mlp-phases li span {
-  display: grid; place-items: center; width: 19px; height: 19px; border-radius: 50%;
-  background: var(--surface-muted); border: 1px solid var(--border); font-size: 11px; font-variant-numeric: tabular-nums;
-}
-.mlp-phases li.is-done { color: var(--text-secondary); }
-.mlp-phases li.is-current { color: var(--text); background: var(--surface-active); }
-.mlp-phases li.is-current.dir-forward span { background: var(--accent-strong); border-color: var(--accent-strong); color: #fff; }
-.mlp-phases li.is-current.dir-backward span { background: var(--sage-text); border-color: var(--sage-text); color: #fff; }
-.mlp-phases li.is-current.dir-update span { background: var(--text); border-color: var(--text); color: #fff; }
 
 /* Diagram */
 .mlp-diagram-wrap { margin: 2px -4px 0; }
@@ -59,27 +43,9 @@
 .mlp-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .mlp-legend i { width: 14px; height: 3px; border-radius: 2px; }
 
-.mlp-transport { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-top: 14px; border-top: 1px solid var(--border); }
 .mlp-speed { display: inline-flex; gap: 2px; margin-left: auto; padding: 3px; background: var(--surface-active); border-radius: 10px; }
 .mlp-speed button { padding: 4px 10px; border: 0; border-radius: 7px; background: transparent; font-size: 13px; color: var(--text-secondary); }
 .mlp-speed button[aria-pressed="true"] { background: var(--surface); color: var(--text); box-shadow: var(--shadow-sm), 0 0 0 1px var(--border); }
-
-/* Explanation */
-.mlp-explain-head { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
-.mlp-explain h2 { font-size: 24px; }
-.mlp-dir { align-self: flex-start; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 550; }
-.mlp-dir.dir-forward { background: var(--accent-soft); color: var(--accent-text); }
-.mlp-dir.dir-backward { background: var(--sage-soft); color: var(--sage-text); }
-.mlp-dir.dir-update { background: var(--surface-active); color: var(--text); }
-.mlp-explain > p { margin: 12px 0; font-size: 15px; line-height: 1.65; color: var(--text-secondary); max-width: 72ch; }
-.formula.mlp-formula { margin: 0; padding: 16px 14px 12px; background: var(--surface-muted); border: 1px solid var(--border); border-radius: var(--radius-md); }
-.formula.mlp-formula .katex { font-size: 1.08em; }
-.mlp-numbers { margin-top: 10px; overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-md); }
-.mlp-numbers table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.mlp-numbers th, .mlp-numbers td { padding: 7px 12px; border-top: 1px solid var(--border); text-align: left; vertical-align: baseline; }
-.mlp-numbers tr:first-child th, .mlp-numbers tr:first-child td { border-top: 0; }
-.mlp-numbers th { width: 1%; white-space: nowrap; font-weight: 600; color: var(--text-secondary); background: var(--surface-muted); }
-.mlp-numbers td { font-family: var(--font-mono); font-size: 12.5px; color: var(--text); white-space: nowrap; font-variant-numeric: tabular-nums; }
 
 /* Hidden-width picker */
 .mlp-width { margin-top: 14px; }
