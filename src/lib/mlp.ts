@@ -1,24 +1,36 @@
 /**
- * A tiny multilayer perceptron (2 → H → 2, H = 2…8) whose single SGD step is exposed
- * as an explicit trace, so every number in the animation is the number the
- * algorithm actually computed.
+ * A small multilayer perceptron, 2 → H × L → 2 (L = 1…3 hidden layers of
+ * width H = 2…8), with tanh, sigmoid or ReLU hidden units and a softmax
+ * output. One SGD step is exposed as an explicit trace, so every number in
+ * the animation is the number the algorithm actually computed.
  *
- *   z¹ = W¹x + b¹        h = tanh(z¹)
- *   z² = W²h + b²        p = softmax(z²)        L = −ln p_y
- *   δ² = p − onehot(y)   ∂L/∂W² = δ² hᵀ         ∂L/∂b² = δ²
- *   δ¹ = (W²ᵀ δ²) ⊙ (1 − h²)
- *   ∂L/∂W¹ = δ¹ xᵀ       ∂L/∂b¹ = δ¹
- *   θ ← θ − η ∂L/∂θ
+ *   a⁰ = x
+ *   zˡ = Wˡ aˡ⁻¹ + bˡ,  aˡ = f(zˡ)                 (hidden layers ℓ = 1…L)
+ *   z = W^{L+1} a^L + b^{L+1},  p = softmax(z),  L = −ln p_y
+ *   δ^{L+1} = p − onehot(y)
+ *   δˡ = (W^{ℓ+1}ᵀ δ^{ℓ+1}) ⊙ f′(zˡ)
+ *   ∂L/∂Wˡ = δˡ aˡ⁻¹ᵀ,  ∂L/∂bˡ = δˡ,  θ ← θ − η ∂L/∂θ
+ *
+ * Arrays are indexed from 0: W[0] maps the input to hidden layer 1 and
+ * W[L] maps the last hidden layer to the output.
  */
 
 export const INPUTS = 2;
-/** Default hidden width, and the range the lab offers. */
+export const OUTPUTS = 2;
+/** Default hidden width, and the ranges the lab offers. */
 export const HIDDEN = 6;
 export const HIDDEN_RANGE = [2, 8] as const;
-export const OUTPUTS = 2;
+export const LAYER_RANGE = [1, 3] as const;
 export const classNames = ["Class A", "Class B"];
 
-export interface Network { w1: number[][]; b1: number[]; w2: number[][]; b2: number[] }
+export type Activation = "tanh" | "sigmoid" | "relu";
+export const activations: Record<Activation, { name: string; f: (z: number) => number; df: (z: number, a: number) => number; derivative: string }> = {
+  tanh: { name: "tanh", f: Math.tanh, df: (_z, a) => 1 - a * a, derivative: "1 − a²" },
+  sigmoid: { name: "sigmoid", f: (z) => 1 / (1 + Math.exp(-z)), df: (_z, a) => a * (1 - a), derivative: "a(1 − a)" },
+  relu: { name: "ReLU", f: (z) => (z > 0 ? z : 0), df: (z) => (z > 0 ? 1 : 0), derivative: "[z > 0]" },
+};
+
+export interface Network { W: number[][][]; b: number[][]; activation: Activation }
 export interface Sample { x: [number, number]; y: 0 | 1 }
 
 export function random(seed: number) {
@@ -42,16 +54,27 @@ export function makeDataset(seed: number, count = 80, noise = .18): Sample[] {
   });
 }
 
-export function makeNetwork(seed: number, hidden = HIDDEN): Network {
-  if (!Number.isInteger(hidden) || hidden < 1) throw new Error("hidden width must be a positive integer");
+/** Layer sizes, e.g. [2, 6, 6, 2] for two hidden layers of width 6. */
+export const layerSizes = (net: Network) => [net.W[0][0].length, ...net.W.map((w) => w.length)];
+export const hiddenLayers = (net: Network) => net.W.length - 1;
+
+/**
+ * Glorot-uniform initialisation for tanh and sigmoid, He-uniform for ReLU;
+ * zero biases. With one tanh layer the random draws are consumed in the same
+ * order as the original single-layer lab, so its results are unchanged.
+ */
+export function makeNetwork(seed: number, hidden: number | number[] = HIDDEN, activation: Activation = "tanh"): Network {
+  const widths = Array.isArray(hidden) ? hidden : [hidden];
+  if (widths.length < 1 || widths.some((w) => !Number.isInteger(w) || w < 1)) throw new Error("hidden widths must be positive integers");
   const rng = random(seed ^ 0x51ed);
-  const glorot = (fanIn: number, fanOut: number) => (2 * rng() - 1) * Math.sqrt(6 / (fanIn + fanOut));
-  return {
-    w1: Array.from({ length: hidden }, () => Array.from({ length: INPUTS }, () => glorot(INPUTS, hidden))),
-    b1: Array<number>(hidden).fill(0),
-    w2: Array.from({ length: OUTPUTS }, () => Array.from({ length: hidden }, () => glorot(hidden, OUTPUTS))),
-    b2: Array<number>(OUTPUTS).fill(0),
-  };
+  const sizes = [INPUTS, ...widths, OUTPUTS];
+  const W = sizes.slice(1).map((fanOut, l) => {
+    const fanIn = sizes[l];
+    const relu = activation === "relu" && l < widths.length;   // the softmax layer stays Glorot
+    const limit = relu ? Math.sqrt(6 / fanIn) : Math.sqrt(6 / (fanIn + fanOut));
+    return Array.from({ length: fanOut }, () => Array.from({ length: fanIn }, () => (2 * rng() - 1) * limit));
+  });
+  return { W, b: sizes.slice(1).map((n) => Array<number>(n).fill(0)), activation };
 }
 
 export function softmax(z: number[]) {
@@ -61,48 +84,59 @@ export function softmax(z: number[]) {
   return e.map((v) => v / s);
 }
 
+const affine = (W: number[][], b: number[], a: readonly number[]) => W.map((row, j) => row.reduce((s, w, i) => s + w * a[i], b[j]));
+
+/** z[ℓ] are pre-activations of every layer (last = output logits); a[0] = x, a[ℓ+1] = f(z[ℓ]) for hidden layers. */
 export function forward(net: Network, x: readonly number[]) {
-  const z1 = net.w1.map((row, j) => row.reduce((s, w, i) => s + w * x[i], net.b1[j]));
-  const h = z1.map(Math.tanh);
-  const z2 = net.w2.map((row, k) => row.reduce((s, w, j) => s + w * h[j], net.b2[k]));
-  const p = softmax(z2);
-  return { z1, h, z2, p };
+  const f = activations[net.activation].f;
+  const z: number[][] = [], a: number[][] = [[...x]];
+  const L = hiddenLayers(net);
+  for (let l = 0; l < L; l++) { z.push(affine(net.W[l], net.b[l], a[l])); a.push(z[l].map(f)); }
+  z.push(affine(net.W[L], net.b[L], a[L]));
+  return { z, a, p: softmax(z[L]) };
 }
 
 export const loss = (p: number[], y: number) => -Math.log(Math.max(p[y], 1e-12));
+const frobenius = (m: number[][]) => Math.sqrt(m.reduce((s, row) => s + row.reduce((t, v) => t + v * v, 0), 0));
 
 /** Everything computed during one SGD update on one sample. */
 export interface StepTrace {
   sample: Sample;
   rate: number;
   before: Network;
-  z1: number[]; h: number[]; z2: number[]; p: number[]; loss: number;
-  delta2: number[]; gradW2: number[][]; gradB2: number[];
-  backHidden: number[];   // W²ᵀ δ², before the tanh derivative
-  delta1: number[]; gradW1: number[][]; gradB1: number[];
+  z: number[][]; a: number[][]; p: number[]; loss: number;
+  /** δ for every layer; delta[L] is the output error p − y. */
+  delta: number[][];
+  /** W^{ℓ+1}ᵀ δ^{ℓ+1} for hidden layers, before multiplying by f′. */
+  back: number[][];
+  gradW: number[][][]; gradB: number[][];
+  /** ‖∂L/∂Wˡ‖ (Frobenius) per weight layer — used to show vanishing gradients. */
+  gradNorms: number[];
   after: Network;
   lossAfter: number;
 }
 
 export function sgdStep(net: Network, sample: Sample, rate: number): StepTrace {
   const before = structuredClone(net);
-  const { z1, h, z2, p } = forward(before, sample.x);
-  const L = loss(p, sample.y);
-  const delta2 = p.map((v, k) => v - Number(k === sample.y));
-  const gradW2 = delta2.map((d) => h.map((hj) => d * hj));
-  const gradB2 = [...delta2];
-  const backHidden = h.map((_, j) => before.w2.reduce((s, row, k) => s + row[j] * delta2[k], 0));
-  const delta1 = backHidden.map((v, j) => v * (1 - h[j] * h[j]));
-  const gradW1 = delta1.map((d) => sample.x.map((xi) => d * xi));
-  const gradB1 = [...delta1];
+  const { z, a, p } = forward(before, sample.x);
+  const L = hiddenLayers(before);
+  const act = activations[before.activation];
+  const delta: number[][] = new Array(L + 1);
+  const back: number[][] = new Array(L);
+  delta[L] = p.map((v, k) => v - Number(k === sample.y));
+  for (let l = L - 1; l >= 0; l--) {
+    back[l] = a[l + 1].map((_, j) => before.W[l + 1].reduce((s, row, k) => s + row[j] * delta[l + 1][k], 0));
+    delta[l] = back[l].map((v, j) => v * act.df(z[l][j], a[l + 1][j]));
+  }
+  const gradW = delta.map((d, l) => d.map((dj) => a[l].map((ai) => dj * ai)));
+  const gradB = delta.map((d) => [...d]);
   const after: Network = {
-    w1: before.w1.map((row, j) => row.map((w, i) => w - rate * gradW1[j][i])),
-    b1: before.b1.map((b, j) => b - rate * gradB1[j]),
-    w2: before.w2.map((row, k) => row.map((w, j) => w - rate * gradW2[k][j])),
-    b2: before.b2.map((b, k) => b - rate * gradB2[k]),
+    activation: before.activation,
+    W: before.W.map((Wl, l) => Wl.map((row, j) => row.map((w, i) => w - rate * gradW[l][j][i]))),
+    b: before.b.map((bl, l) => bl.map((v, j) => v - rate * gradB[l][j])),
   };
   const lossAfter = loss(forward(after, sample.x).p, sample.y);
-  return { sample, rate, before, z1, h, z2, p, loss: L, delta2, gradW2, gradB2, backHidden, delta1, gradW1, gradB1, after, lossAfter };
+  return { sample, rate, before, z, a, p, loss: loss(p, sample.y), delta, back, gradW, gradB, gradNorms: gradW.map(frobenius), after, lossAfter };
 }
 
 export function evaluate(net: Network, samples: Sample[]) {
@@ -123,15 +157,27 @@ export function sampleOrder(count: number, seed: number, epoch: number) {
   return order;
 }
 
-/** The phases the animation walks through for one update. */
-export const phases = [
-  { id: "input", title: "Input", direction: "forward" },
-  { id: "hidden-sum", title: "Weighted sum", direction: "forward" },
-  { id: "hidden-act", title: "Activation", direction: "forward" },
-  { id: "output-sum", title: "Output logits", direction: "forward" },
-  { id: "softmax", title: "Softmax & loss", direction: "forward" },
-  { id: "output-grad", title: "Output error", direction: "backward" },
-  { id: "hidden-grad", title: "Backpropagate", direction: "backward" },
-  { id: "update", title: "Update weights", direction: "update" },
-] as const;
-export type PhaseId = typeof phases[number]["id"];
+/* ── Phases of one update, depending on depth ─────────────────────────── */
+export type PhaseKind = "input" | "sum" | "act" | "output-sum" | "softmax" | "output-grad" | "backprop" | "update";
+export interface Phase { kind: PhaseKind; layer?: number; title: string; direction: "forward" | "backward" | "update" }
+
+export function makePhases(hidden: number): Phase[] {
+  const many = hidden > 1;
+  const name = (l: number) => (many ? ` · layer ${l + 1}` : "");
+  return [
+    { kind: "input", title: "Input", direction: "forward" },
+    ...Array.from({ length: hidden }, (_, l): Phase[] => [
+      { kind: "sum", layer: l, title: `Weighted sum${name(l)}`, direction: "forward" },
+      { kind: "act", layer: l, title: `Activation${name(l)}`, direction: "forward" },
+    ]).flat(),
+    { kind: "output-sum", title: "Output logits", direction: "forward" },
+    { kind: "softmax", title: "Softmax & loss", direction: "forward" },
+    { kind: "output-grad", title: "Output error", direction: "backward" },
+    ...Array.from({ length: hidden }, (_, i): Phase => { const l = hidden - 1 - i; return { kind: "backprop", layer: l, title: `Backpropagate${name(l)}`, direction: "backward" }; }),
+    { kind: "update", title: "Update weights", direction: "update" },
+  ];
+}
+
+/** Key into the phase text table (activation-specific for "act" and "backprop"). */
+export const phaseTextKey = (phase: Phase, activation: Activation) =>
+  phase.kind === "act" || phase.kind === "backprop" ? `${phase.kind}-${activation}` : phase.kind;
