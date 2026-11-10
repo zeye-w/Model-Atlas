@@ -114,9 +114,9 @@ export const models: ModelDefinition[] = [
     strengths: ["Long-range relationships", "Flexible across modalities", "Parallelizable training"],
     limitations: ["Standard attention may scale quadratically with length", "Attention maps are not causal explanations"],
     useCases: ["Language models", "Vision transformers", "Cross-modal fusion"],
-    tags: ["Attention", "Sequence", "Foundation Models"], executionMode: "planned",
+    tags: ["Attention", "Sequence", "Foundation Models"], executionMode: "live-computation",
     paper: { name: "Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", year: "2017" },
-    related: ["cnn", "mlp", "diffusion"], color: "#87796e", featured: true, labPlan: "Explore attention and token interactions."
+    related: ["cnn", "mlp", "diffusion"], color: "#87796e", featured: true, lab: { href: "/lab/attention", title: "Attention laboratory", description: "Step through one attention head on your own sentence — embeddings, queries, keys, values, scores, softmax and the weighted sum — with hand-built and random heads." }
   },
   {
     slug: "diffusion", acronym: "DIF", name: "Diffusion Model", chineseName: "扩散模型", family: "Generative AI", paradigm: "Generative / Self-supervised", level: "Advanced",

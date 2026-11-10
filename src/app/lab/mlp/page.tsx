@@ -6,6 +6,7 @@ import { ModeBadge } from "@/components/ModelCard";
 import { MlpLab } from "@/components/MlpLab/MlpLab";
 import { mlpPhaseText } from "@/content/mlp-phases";
 import { phases } from "@/lib/mlp";
+import "../steps.css";
 import "./mlp.css";
 
 export const metadata: Metadata = {

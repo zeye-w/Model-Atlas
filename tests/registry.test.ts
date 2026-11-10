@@ -16,7 +16,7 @@ test("model slugs are unique and links resolve", () => {
 test("live labs have a registered execution mode", () => {
   assert.equal(getModel("linear-regression")?.executionMode,"live-training");
   assert.equal(getModel("cnn")?.executionMode,"live-training");
-  assert.deepEqual(labPages.map((lab)=>lab.href),["/lab/linear-regression","/lab/mlp","/lab/cnn","/lab/regression"]);
+  assert.deepEqual(labPages.map((lab)=>lab.href),["/lab/linear-regression","/lab/mlp","/lab/cnn","/lab/attention","/lab/regression"]);
   assert.deepEqual(labPages.find((lab)=>lab.href==="/lab/regression")!.models.map((m)=>m.slug),["adaboost","gradient-boosting","random-forest","catboost","rbf-network"]);
   for (const model of liveLabs) if (labPath(model.lab!.href) === "/lab/regression") assert.equal(model.lab!.href, `/lab/regression?model=${model.slug}`);
 });
@@ -57,8 +57,9 @@ test("every formula is valid KaTeX", async () => {
   const { renderLatex } = await import("../src/lib/math");
   const { cnnLessons } = await import("../src/content/cnn-theory");
   const { mlpPhaseText } = await import("../src/content/mlp-phases");
-  const formulas = [...models.map((model) => [model.slug, model.latex]), ...cnnLessons.map((lesson) => [lesson.title, lesson.latex]), ...Object.entries(mlpPhaseText).map(([id, phase]) => [id, phase.latex])];
-  assert.equal(formulas.length, models.length + 12 + 8);
+  const { attentionPhaseText } = await import("../src/content/attention-phases");
+  const formulas = [...models.map((model) => [model.slug, model.latex]), ...cnnLessons.map((lesson) => [lesson.title, lesson.latex]), ...Object.entries(mlpPhaseText).map(([id, phase]) => [id, phase.latex]), ...Object.entries(attentionPhaseText).map(([id, phase]) => [id, phase.latex])];
+  assert.equal(formulas.length, models.length + 12 + 8 + 5);
   for (const [name, latex] of formulas) {
     assert.doesNotThrow(() => renderLatex(latex), `${name}: ${latex}`);
     assert.match(renderLatex(latex), /<math/, `${name} has a MathML rendering for screen readers`);
