@@ -13,10 +13,10 @@ test("model slugs are unique and links resolve", () => {
   }
 });
 
-test("both live labs have a registered execution mode", () => {
+test("live labs have a registered execution mode", () => {
   assert.equal(getModel("linear-regression")?.executionMode,"live-training");
   assert.equal(getModel("cnn")?.executionMode,"live-training");
-  assert.deepEqual(liveLabs.map((model)=>model.slug),["linear-regression","cnn"]);
+  assert.deepEqual(liveLabs.map((model)=>model.slug),["linear-regression","mlp","cnn"]);
 });
 
 test("execution mode and lab metadata agree", () => {
@@ -54,8 +54,9 @@ test("count formatting", () => {
 test("every formula is valid KaTeX", async () => {
   const { renderLatex } = await import("../src/lib/math");
   const { cnnLessons } = await import("../src/content/cnn-theory");
-  const formulas = [...models.map((model) => [model.slug, model.latex]), ...cnnLessons.map((lesson) => [lesson.title, lesson.latex])];
-  assert.equal(formulas.length, models.length + 12);
+  const { mlpPhaseText } = await import("../src/content/mlp-phases");
+  const formulas = [...models.map((model) => [model.slug, model.latex]), ...cnnLessons.map((lesson) => [lesson.title, lesson.latex]), ...Object.entries(mlpPhaseText).map(([id, phase]) => [id, phase.latex])];
+  assert.equal(formulas.length, models.length + 12 + 8);
   for (const [name, latex] of formulas) {
     assert.doesNotThrow(() => renderLatex(latex), `${name}: ${latex}`);
     assert.match(renderLatex(latex), /<math/, `${name} has a MathML rendering for screen readers`);
