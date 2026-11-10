@@ -59,7 +59,7 @@ test("every formula is valid KaTeX", async () => {
   const { mlpPhaseText } = await import("../src/content/mlp-phases");
   const { attentionPhaseText } = await import("../src/content/attention-phases");
   const formulas = [...models.map((model) => [model.slug, model.latex]), ...cnnLessons.map((lesson) => [lesson.title, lesson.latex]), ...Object.entries(mlpPhaseText).map(([id, phase]) => [id, phase.latex]), ...Object.entries(attentionPhaseText).map(([id, phase]) => [id, phase.latex])];
-  assert.equal(formulas.length, models.length + 12 + 8 + 5);
+  assert.equal(formulas.length, models.length + 12 + 12 + 5);
   for (const [name, latex] of formulas) {
     assert.doesNotThrow(() => renderLatex(latex), `${name}: ${latex}`);
     assert.match(renderLatex(latex), /<math/, `${name} has a MathML rendering for screen readers`);

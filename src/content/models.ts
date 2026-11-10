@@ -87,7 +87,7 @@ export const models: ModelDefinition[] = [
     useCases: ["Regression", "Classification", "Neural network fundamentals"],
     tags: ["Neural Network", "Backpropagation", "Optimization"], executionMode: "live-training",
     paper: { name: "Learning representations by back-propagating errors", url: "https://doi.org/10.1038/323533a0", year: "1986" },
-    related: ["linear-regression", "cnn", "transformer"], color: "#988373", lab: { href: "/lab/mlp", title: "MLP laboratory", description: "Watch one training step move through a small network: weighted sums, activations, softmax, backpropagated errors and the weight update — every number computed live." }
+    related: ["linear-regression", "cnn", "transformer"], color: "#988373", lab: { href: "/lab/mlp", title: "MLP laboratory", description: "Watch one training step move through a network of up to three hidden layers: weighted sums, activations, softmax, backpropagated errors and the update. Switch tanh, sigmoid and ReLU to see gradients vanish." }
   },
   {
     slug: "cnn", acronym: "CNN", name: "Convolutional Neural Network", chineseName: "卷积神经网络", family: "Deep Learning", paradigm: "Supervised / Self-supervised", level: "Intermediate",
