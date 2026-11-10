@@ -12,7 +12,7 @@ export function NumberField({ label, min, max, step = 1, value, change, disabled
   }} onBlur={() => setDraft(String(value))}/></label>;
 }
 
-const colors = ["#ad5537", "#65795b", "#416984", "#935d88", "#80651d", "#51498e"];
+const colors = ["#c96442", "#6f8a63", "#4f7396", "#8a5c88", "#9a7a2e", "#5a5296"];
 
 export function Plot({ title, rows, marks = [], labels, domain }: {
   title: string; rows: number[][]; marks?: number[]; labels?: string[]; domain?: [number, number];
@@ -25,8 +25,8 @@ export function Plot({ title, rows, marks = [], labels, domain }: {
   return <figure className="cnn-plot">
     <figcaption>{title}</figcaption>
     <svg viewBox="0 0 320 100" role="img" aria-label={title}>
-      <line x1="12" x2="308" y1={y(0)} y2={y(0)} stroke="#e8e0d6"/>
-      {marks.filter(i => i >= 0 && i < length).map(i => <line key={i} x1={x(i)} x2={x(i)} y1="8" y2="91" stroke="#e7baaa" strokeWidth="3"/>)}
+      <line x1="12" x2="308" y1={y(0)} y2={y(0)} stroke="#e3dfd5"/>
+      {marks.filter(i => i >= 0 && i < length).map(i => <line key={i} x1={x(i)} x2={x(i)} y1="8" y2="91" stroke="#f0cdbd" strokeWidth="3"/>)}
       {rows.map((row, c) => <g key={c} stroke={colors[c]} fill={colors[c]}>
         <polyline points={row.map((v, i) => x(i) + "," + y(v)).join(" ")} fill="none" strokeWidth="1.6"/>
         {row.length === 1 && <circle cx={x(0)} cy={y(row[0])} r="3"/>}

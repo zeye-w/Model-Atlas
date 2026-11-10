@@ -102,7 +102,7 @@ export const models: ModelDefinition[] = [
     tags: ["Vision", "Convolution", "Feature Maps"], executionMode: "live-training",
     paper: { name: "Gradient-Based Learning Applied to Document Recognition", url: "https://doi.org/10.1109/5.726791", year: "1998" },
     related: ["mlp", "transformer", "pinn"], color: "#bd704f", featured: true,
-    lab: { href: "/lab/cnn", title: "CNN Laboratory", description: "Inspect convolution windows, train a waveform classifier, and trace weight updates." }
+    lab: { href: "/lab/cnn", title: "CNN laboratory", description: "Inspect convolution windows, train a waveform classifier, and trace weight updates." }
   },
   {
     slug: "transformer", acronym: "TRF", name: "Transformer", chineseName: "Transformer 架构", family: "Deep Learning", paradigm: "Self-supervised / Supervised", level: "Advanced",

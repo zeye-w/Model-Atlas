@@ -1,31 +1,94 @@
-.cnn-lab { background: #fff; border: 1px solid var(--line); border-radius: 15px; padding: clamp(10px, 2vw, 22px); }
-.cnn-tabs, .cnn-actions, .cnn-legend { display: flex; flex-wrap: wrap; gap: 6px; }
-.cnn-tabs { border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 14px; }
-.cnn-lab button, .cnn-lab select, .cnn-lab input { font: inherit; color: inherit; border: 1px solid var(--line); background: #fff; border-radius: 6px; }
-.cnn-lab button { padding: 6px 9px; font-size: .78rem; cursor: pointer; transition: background-color .15s; }
-.cnn-lab button:hover:enabled, .cnn-lab button[aria-selected="true"] { background: #f4e2d8; color: #844227; border-color: #ddb6a4; }
-.cnn-lab button:disabled { opacity: .5; cursor: default; }
-.cnn-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.65fr) minmax(0, 1.25fr); gap: 10px; align-items: start; }
-.cnn-card { border: 1px solid var(--line); border-radius: 10px; padding: 12px; min-width: 0; font-size: .82rem; }
-.cnn-card h2 { font-size: 1.17rem; margin: 0 0 10px; }
-.cnn-card h3 { font-size: .95rem; margin: 14px 0 5px; }
-.cnn-card p { margin: 7px 0; line-height: 1.5; }
-.cnn-card label { display: grid; gap: 3px; margin: 8px 0; font-weight: 600; }
-.cnn-card input, .cnn-card select { min-width: 0; padding: 5px; width: 100%; }
-.cnn-card .cnn-check { display: flex; align-items: center; }
-.cnn-card .cnn-check input { width: auto; accent-color: var(--coral); }
-.cnn-card ul, .cnn-architecture { padding-left: 18px; }
-.cnn-architecture li { padding: 4px 0; }
-.cnn-plot { background: #fbf8f3; border-radius: 8px; margin: 10px 0; padding: 7px; }
-.cnn-plot svg { display: block; width: 100%; }
-.cnn-legend { font-size: .72rem; }
-.cnn-table { overflow-x: auto; margin: 8px 0; }
-.cnn-table table { width: 100%; border-collapse: collapse; text-align: right; font-variant-numeric: tabular-nums; }
-.cnn-table caption { text-align: left; color: var(--muted); padding-bottom: 4px; }
-.cnn-table th, .cnn-table td { padding: 5px; border-bottom: 1px solid var(--line); }
-.cnn-table thead { background: #f8f3ed; }
-.cnn-theory summary { cursor: pointer; font-weight: 650; }
-.cnn-formula { background: #f8f3ed; padding: 8px; overflow-wrap: anywhere; }
-@media (max-width: 1050px) { .cnn-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr); } }
-@media (max-width: 690px) { .cnn-grid { grid-template-columns: minmax(0, 1fr); } }
-@media (prefers-reduced-motion: reduce) { .cnn-lab button { transition: none; } }
+/* CNN laboratory — route-scoped styles built on the tokens in globals.css. */
+.cnn-lab { display: grid; gap: 16px; }
+
+/* Workspace switcher: a segmented control */
+.cnn-tabs {
+  display: inline-flex; flex-wrap: wrap; gap: 2px; justify-self: start; padding: 3px;
+  background: var(--surface-active); border-radius: 12px;
+}
+.cnn-tabs [role="tab"] {
+  padding: 7px 14px; border: 0; border-radius: 9px; background: transparent;
+  font-size: 14px; font-weight: 500; color: var(--text-secondary); transition: background .12s, color .12s, box-shadow .12s;
+}
+.cnn-tabs [role="tab"]:hover { color: var(--text); }
+.cnn-tabs [role="tab"][aria-selected="true"] { background: var(--surface); color: var(--text); box-shadow: var(--shadow-sm), 0 0 0 1px var(--border); }
+
+.cnn-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) minmax(0, 1.25fr); gap: 14px; align-items: start; }
+.cnn-card {
+  min-width: 0; padding: 18px; font-size: 14px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+}
+.cnn-card h2 { margin-bottom: 12px; font-family: var(--font-sans); font-size: 16px; font-weight: 600; letter-spacing: -.005em; }
+.cnn-card h3 { margin: 18px 0 6px; font-size: 14.5px; }
+.cnn-card p { margin: 8px 0; line-height: 1.55; color: var(--text-secondary); }
+.cnn-card p strong { color: var(--text); font-variant-numeric: tabular-nums; }
+
+/* Fields */
+.cnn-card label { display: grid; gap: 5px; margin: 10px 0; font-size: 13.5px; font-weight: 500; color: var(--text); }
+.cnn-card input:not([type="checkbox"]), .cnn-card select {
+  width: 100%; min-width: 0; height: 36px; padding: 0 10px;
+  background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius-md);
+  font-size: 14px; font-weight: 400; font-variant-numeric: tabular-nums; color: var(--text);
+  outline: none; transition: border-color .12s, box-shadow .12s;
+}
+.cnn-card select {
+  appearance: none; padding-right: 30px; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236e6b63' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center;
+}
+.cnn-card input:focus, .cnn-card select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.cnn-card input:disabled, .cnn-card select:disabled { background: var(--surface-muted); color: var(--text-tertiary); cursor: not-allowed; }
+.cnn-card .cnn-check { display: flex; align-items: center; gap: 8px; }
+.cnn-card .cnn-check input { width: 16px; height: 16px; accent-color: var(--accent-strong); }
+.cnn-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 10px; }
+
+/* Buttons */
+.cnn-lab .cnn-card button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 34px; padding: 0 12px; border-radius: var(--radius-md);
+  border: 1px solid var(--border-strong); background: var(--surface); color: var(--text);
+  font-size: 13.5px; font-weight: 500; transition: background .12s, border-color .12s;
+}
+.cnn-lab .cnn-card button:hover:enabled { background: var(--surface-muted); }
+.cnn-lab .cnn-card button:disabled { opacity: .45; cursor: not-allowed; }
+.cnn-lab .cnn-card button.primary { background: var(--accent-strong); border-color: var(--accent-strong); color: #fff; }
+.cnn-lab .cnn-card button.primary:hover:enabled { background: var(--accent-strong-hover); }
+.cnn-actions { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+
+/* Plots and tables */
+.cnn-plot { margin: 10px 0; padding: 10px 10px 8px; background: #fdfcfa; border: 1px solid var(--border); border-radius: var(--radius-md); }
+.cnn-plot figcaption { margin-bottom: 4px; font-size: 13px; font-weight: 500; }
+.cnn-plot svg { display: block; width: 100%; height: auto; }
+.cnn-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 4px; font-size: 12px; color: var(--text-tertiary); font-variant-numeric: tabular-nums; }
+.cnn-legend span:not(:first-child)::before { content: ""; display: inline-block; width: 10px; height: 2px; margin-right: 5px; vertical-align: middle; background: currentColor; border-radius: 1px; }
+
+.cnn-table { margin: 10px 0; overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-md); }
+.cnn-table table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: right; font-variant-numeric: tabular-nums; }
+.cnn-table caption { padding: 8px 10px 4px; text-align: left; font-size: 12.5px; color: var(--text-tertiary); }
+.cnn-table th, .cnn-table td { padding: 6px 10px; border-top: 1px solid var(--border); }
+.cnn-table thead th { border-top: 0; background: var(--surface-muted); font-weight: 600; color: var(--text-secondary); }
+.cnn-table tbody th { font-weight: 500; text-align: left; color: var(--text-secondary); }
+
+.cnn-card ul, .cnn-architecture { margin: 6px 0; padding-left: 18px; color: var(--text-secondary); }
+.cnn-architecture li { padding: 2px 0; font-variant-numeric: tabular-nums; }
+.cnn-steps { font-size: 13.5px; color: var(--text-tertiary); }
+
+/* Theory */
+.cnn-theory { gap: 10px; }
+.cnn-theory .cnn-card { padding: 0; }
+.cnn-theory summary {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 14px 16px; cursor: pointer; list-style: none; font-size: 14.5px; font-weight: 600;
+}
+.cnn-theory summary::-webkit-details-marker { display: none; }
+.cnn-theory summary::after { content: "+"; font-weight: 400; font-size: 18px; line-height: 1; color: var(--text-tertiary); transition: transform .15s; }
+.cnn-theory details[open] summary::after { transform: rotate(45deg); }
+.cnn-theory details[open] { border-color: var(--border-strong); }
+.cnn-theory details > :not(summary) { margin-left: 16px; margin-right: 16px; }
+.cnn-theory details > button { margin-bottom: 16px; }
+.formula.cnn-formula { display: flex; flex-direction: column; margin: 0 16px 10px; padding: 10px; background: var(--surface-muted); border-radius: var(--radius-md); }
+.formula.cnn-formula .katex { font-size: 1.04em; }
+.formula.cnn-formula .formula-copy { position: static; align-self: flex-end; order: -1; margin-bottom: 2px; }
+
+@media (max-width: 1100px) { .cnn-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); } }
+@media (max-width: 720px) { .cnn-grid { grid-template-columns: minmax(0, 1fr); } }
