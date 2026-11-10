@@ -35,7 +35,7 @@ jobs:
           for i in $(seq 1 60); do curl -sf -o /dev/null http://localhost:4173/ && break; sleep 1; done
           sha="${GITHUB_SHA::7}"
           fail=0
-          for path in / /atlas /models /models/linear-regression /models/cnn /lab /lab/linear-regression /lab/cnn /compare /research /learn; do
+          for path in / /atlas /models /models/linear-regression /models/cnn /lab /lab/linear-regression /lab/mlp /lab/cnn /models/mlp /compare /research /learn; do
             code=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:4173$path")
             echo "$code $path"
             [ "$code" = "200" ] || fail=1
