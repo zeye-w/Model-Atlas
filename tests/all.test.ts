@@ -6,3 +6,4 @@ import "./mlp.test";
 import "./ensembles.test";
 import "./attention.test";
 import "./classify.test";
+import "./pinn.test";

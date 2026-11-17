@@ -1,0 +1,42 @@
+/* PINN laboratory — route-scoped; also uses .reg-* plot styles from ../regression/regression.css. */
+.pinn-lab {
+  display: grid; gap: 16px; align-items: start;
+  grid-template-columns: minmax(0, 1.75fr) minmax(280px, .85fr);
+  grid-template-areas: "tabs tabs" "main side" "residual side" "loss side" "mu side" "formulas formulas";
+}
+.pinn-tabs { grid-area: tabs; }
+.pinn-main { grid-area: main; }
+.pinn-side { grid-area: side; display: grid; gap: 16px; min-width: 0; }
+.pinn-side .btn { margin-top: 4px; justify-self: start; }
+.pinn-residual { grid-area: residual; }
+.pinn-loss { grid-area: loss; }
+.pinn-mu { grid-area: mu; }
+.pinn-formulas { grid-area: formulas; }
+.pinn-formula-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.pinn-formula-grid .formula { margin: 0; height: 100%; }
+
+.pinn-window { fill: var(--accent-soft); opacity: .7; }
+.pinn-caption { font-size: 11px; fill: var(--text-tertiary); font-variant-numeric: tabular-nums; }
+
+.pinn-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 8px 0 0; padding: 0; list-style: none; font-size: 12.5px; color: var(--text-secondary); }
+.pinn-legend li { display: inline-flex; align-items: center; gap: 6px; }
+
+.pinn-progress { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 220px; font-size: 13px; color: var(--text-tertiary); white-space: nowrap; }
+.pinn-progress strong { color: var(--text); font-variant-numeric: tabular-nums; }
+.pinn-track { position: relative; flex: 1; height: 6px; border-radius: 3px; background: var(--surface-active); overflow: hidden; }
+.pinn-track i { position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 3px; transition: width .2s linear; }
+
+.pinn-formulas .formula { margin: 0 0 8px; }
+.pinn-formulas .training-meta { margin: 4px 0 8px; }
+
+@media (max-width: 1080px) {
+  .pinn-lab { grid-template-columns: minmax(0, 1fr); grid-template-areas: "tabs" "main" "side" "residual" "loss" "mu" "formulas";
+  }
+  .pinn-formula-grid { grid-template-columns: minmax(0, 1fr); }
+  .pinn-side { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+}
+@media (max-width: 640px) {
+  .pinn-tabs { display: flex; flex-wrap: nowrap; overflow-x: auto; justify-self: stretch; scrollbar-width: none; }
+  .pinn-tabs [role="tab"] { flex-shrink: 0; }
+  .pinn-caption { font-size: 15px; }
+}
