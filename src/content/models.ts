@@ -57,9 +57,9 @@ export const models: ModelDefinition[] = [
     strengths: ["Intuitive local predictions", "Non-parametric decisions", "No explicit fitting stage"],
     limitations: ["Sensitive to scaling and irrelevant features", "Query cost grows with training set size"],
     useCases: ["Classification", "Similarity search", "Simple regression"],
-    tags: ["Classification", "Distance", "Non-parametric"], executionMode: "planned",
+    tags: ["Classification", "Distance", "Non-parametric"], executionMode: "live-computation",
     paper: { name: "Discriminatory Analysis: Nonparametric Discrimination", url: "https://doi.org/10.2172/4211277", year: "1951" },
-    related: ["decision-tree", "linear-regression"], color: "#7f8a73", labPlan: "Neighborhood selection, voting and dynamic classification boundaries."
+    related: ["decision-tree", "linear-regression"], color: "#7f8a73", lab: { href: "/lab/knn", title: "KNN laboratory", description: "Drag a query point and follow one prediction: distances, the k nearest, the vote and the decision regions. Compare distances, k and feature scaling." }
   },
   {
     slug: "decision-tree", acronym: "DT", name: "Decision Tree", chineseName: "决策树", family: "Classical ML", paradigm: "Supervised Learning", level: "Foundation",
@@ -71,9 +71,9 @@ export const models: ModelDefinition[] = [
     strengths: ["Rule-based explanations", "Captures nonlinear interactions", "Little feature preprocessing needed"],
     limitations: ["Deep trees can overfit", "Small data changes may change the tree"],
     useCases: ["Tabular classification", "Feature interactions", "Decision support"],
-    tags: ["Classification", "Tree", "Interpretable"], executionMode: "planned",
+    tags: ["Classification", "Tree", "Interpretable"], executionMode: "live-training",
     paper: { name: "Classification and Regression Trees", url: "https://www.routledge.com/Classification-and-Regression-Trees/Breiman-Friedman-Olshen-Stone/p/book/9780412048418", year: "1984" },
-    related: ["knn", "mlp"], color: "#b08a58", labPlan: "Watch impurity scores and recursive partitioning evolve."
+    related: ["knn", "mlp"], color: "#b08a58", lab: { href: "/lab/decision-tree", title: "Decision tree laboratory", description: "Grow a classification tree one split at a time and see every threshold it tries, the impurity it removes, and how depth affects held-out accuracy." }
   },
   {
     slug: "mlp", acronym: "MLP", name: "Multilayer Perceptron", chineseName: "多层感知机", family: "Deep Learning", paradigm: "Supervised Learning", level: "Intermediate",
@@ -130,7 +130,7 @@ export const models: ModelDefinition[] = [
     useCases: ["Image generation", "Data augmentation", "Generative priors"],
     tags: ["Generative", "Denoising", "Sampling"], executionMode: "planned",
     paper: { name: "Denoising Diffusion Probabilistic Models", url: "https://arxiv.org/abs/2006.11239", year: "2020" },
-    related: ["transformer", "pinn"], color: "#bd8577"
+    related: ["transformer", "pinn"], color: "#bd8577", labPlan: "Noise a 2-D point cloud step by step and watch a learned denoiser bring it back."
   },
   {
     slug: "pinn", acronym: "PINN", name: "Physics-Informed Neural Network", chineseName: "物理信息神经网络", family: "Scientific ML", paradigm: "Physics-guided / Supervised", level: "Advanced",
@@ -144,7 +144,7 @@ export const models: ModelDefinition[] = [
     useCases: ["Wave equations", "Flow modeling", "Scientific inversion"],
     tags: ["Physics", "PDE", "Inverse Problems"], executionMode: "planned",
     paper: { name: "Physics-informed neural networks: A deep learning framework", url: "https://doi.org/10.1016/j.jcp.2018.10.045", year: "2019" },
-    related: ["mlp", "cnn", "diffusion"], color: "#7f8a73"
+    related: ["mlp", "cnn", "diffusion"], color: "#7f8a73", labPlan: "Fit a 1-D wave or heat equation with and without the physics residual, and compare."
   },
   {
     slug: "adaboost", acronym: "ADA", name: "AdaBoost", chineseName: "自适应提升", family: "Ensemble Learning", paradigm: "Supervised Learning · Boosting", level: "Intermediate",
