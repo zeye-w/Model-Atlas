@@ -142,9 +142,10 @@ export const models: ModelDefinition[] = [
     strengths: ["Uses governing equations", "Can integrate sparse observations", "Relevant to inverse problems"],
     limitations: ["Loss balancing is difficult", "Can struggle with multiscale dynamics"],
     useCases: ["Wave equations", "Flow modeling", "Scientific inversion"],
-    tags: ["Physics", "PDE", "Inverse Problems"], executionMode: "planned",
+    tags: ["Physics", "PDE", "Inverse Problems"], executionMode: "live-training",
+    lab: { href: "/lab/pinn", title: "PINN laboratory", description: "Train a network on a damped oscillator with and without the physics residual, and recover an unknown damping coefficient." },
     paper: { name: "Physics-informed neural networks: A deep learning framework", url: "https://doi.org/10.1016/j.jcp.2018.10.045", year: "2019" },
-    related: ["mlp", "cnn", "diffusion"], color: "#7f8a73", labPlan: "Fit a 1-D wave or heat equation with and without the physics residual, and compare."
+    related: ["mlp", "cnn", "diffusion"], color: "#7f8a73"
   },
   {
     slug: "adaboost", acronym: "ADA", name: "AdaBoost", chineseName: "自适应提升", family: "Ensemble Learning", paradigm: "Supervised Learning · Boosting", level: "Intermediate",
