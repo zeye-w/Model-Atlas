@@ -8,9 +8,6 @@
 .att-explain { grid-area: explain; min-width: 0; padding: 22px 24px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); }
 .att-side { grid-area: side; display: grid; gap: 16px; min-width: 0; }
 
-.att-phases li { padding: 0; }
-.att-phases li button { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px 5px 6px; border: 0; border-radius: 999px; background: transparent; color: inherit; font: inherit; }
-.att-phases li:not(.is-current) button:hover { background: var(--surface-hover); }
 
 /* Words and arcs */
 .att-arcs { margin: 6px 0 0; }
@@ -58,8 +55,6 @@
 .att-heads button strong { font-size: 14px; font-weight: 600; }
 .att-heads button span { font-size: 12.5px; line-height: 1.5; color: var(--text-tertiary); }
 .att-heads button[aria-checked="true"] { border-color: var(--accent); background: var(--accent-soft); }
-.att-toggle { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 14px; }
-.att-toggle input { width: 16px; height: 16px; accent-color: var(--accent-strong); }
 
 @media (max-width: 1080px) {
   .att-lab { grid-template-columns: minmax(0, 1fr); grid-template-areas: "stage" "explain" "side"; }

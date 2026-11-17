@@ -16,7 +16,7 @@ test("model slugs are unique and links resolve", () => {
 test("live labs have a registered execution mode", () => {
   assert.equal(getModel("linear-regression")?.executionMode,"live-training");
   assert.equal(getModel("cnn")?.executionMode,"live-training");
-  assert.deepEqual(labPages.map((lab)=>lab.href),["/lab/linear-regression","/lab/mlp","/lab/cnn","/lab/attention","/lab/regression"]);
+  assert.deepEqual(labPages.map((lab)=>lab.href),["/lab/linear-regression","/lab/knn","/lab/decision-tree","/lab/mlp","/lab/cnn","/lab/attention","/lab/regression"]);
   assert.deepEqual(labPages.find((lab)=>lab.href==="/lab/regression")!.models.map((m)=>m.slug),["adaboost","gradient-boosting","random-forest","catboost","rbf-network"]);
   for (const model of liveLabs) if (labPath(model.lab!.href) === "/lab/regression") assert.equal(model.lab!.href, `/lab/regression?model=${model.slug}`);
 });
